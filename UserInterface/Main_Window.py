@@ -1,54 +1,9 @@
 import sys
+from UserInterface import ActionReport, Configurations, Filter
 from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 from PyQt5.QtGui import *
 
-class Window5(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Enforcement Action Report")
-        #Window Dimensions
-        self.top = 600
-        self.left = 300
-        self.width = 680
-        self.height = 580
-        self.setGeometry(self.top, self.left, self.width, self.height)
-
-class Window4(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Event Configuration")
-        #Window Dimensions
-        self.top = 600
-        self.left = 300
-        self.width = 680
-        self.height = 580
-        self.setGeometry(self.top, self.left, self.width, self.height)
-
-
-class Window3(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Manage Graph")
-        #Window Dimensions
-        self.top = 600
-        self.left = 300
-        self.width = 680
-        self.height = 580
-        self.setGeometry(self.top, self.left, self.width, self.height)
-
-
-class Window2(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Search/Filter")
-
-        #Window Dimensions
-        self.top = 600
-        self.left = 300
-        self.width = 680
-        self.height = 580
-        self.setGeometry(self.top, self.left, self.width, self.height)
 
 class Window(QMainWindow):
     def __init__(self):
@@ -117,23 +72,25 @@ class Window(QMainWindow):
         self.show()
 
     def searchFilterButtonClicked(self):
-        self.w = Window2()
-        self.w.show()
+        self.filterWindow = QMainWindow()
+        Filter.FilterUi().setupUi(self.filterWindow)
+        self.filterWindow.show()
         self.hide()
 
     def manageGraphButtonClicked(self):
-        self.w = Window3()
-        self.w.show()
-        self.hide()
+        # TODO: Create the graph window class and have it pop up in this method
+        pass
 
     def eventConfigButtonClicked(self):
-        self.w = Window4()
-        self.w.show()
+        self.eventConfigWindow = QMainWindow()
+        Configurations.ConfigurationsUi().generateUi(self.eventConfigWindow)
+        self.eventConfigWindow.show()
         self.hide()
 
     def actionReportButtonClicked(self):
-        self.w = Window5()
-        self.w.show()
+        self.actionReportWindow = QMainWindow()
+        ActionReport.actionReport().generateUi(self.actionReportWindow)
+        self.actionReportWindow.show()
         self.hide()
 
 if __name__ == "__main__":
