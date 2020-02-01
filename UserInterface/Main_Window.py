@@ -62,36 +62,36 @@ class Window(QMainWindow):
 
 
         # Button Changes window to the Event Configuration window
-        self.pushButton = QPushButton("Event Configuration", self)
-        self.pushButton.move(360, 150)
-        self.pushButton.resize(250, 40)
-        self.pushButton.setToolTip("<h5></h5>")
+        self.eventConfigButton = QPushButton("Event Configuration", self)
+        self.eventConfigButton.move(360, 150)
+        self.eventConfigButton.resize(250, 40)
+        self.eventConfigButton.setToolTip("<h5></h5>")
 
-        self.pushButton.clicked.connect(self.window4)
+        self.eventConfigButton.clicked.connect(self.eventConfigButtonClicked)
 
         # Button 2 Changes window to the Enforcement Action Report window
-        self.pushButton2 = QPushButton("Enforcement Action Report", self)
-        self.pushButton2.move(80, 150)
-        self.pushButton2.resize(250, 40)
-        self.pushButton2.setToolTip("<h5></h5>")
+        self.actionReportButton = QPushButton("Enforcement Action Report", self)
+        self.actionReportButton.move(80, 150)
+        self.actionReportButton.resize(250, 40)
+        self.actionReportButton.setToolTip("<h5></h5>")
 
-        self.pushButton2.clicked.connect(self.window5)
+        self.actionReportButton.clicked.connect(self.actionReportButtonClicked)
 
         # Button 3 Changes window to the Search/Filter window
-        self.pushButton3 = QPushButton("Search/Filter", self)
-        self.pushButton3.move(360, 200)
-        self.pushButton3.resize(250, 40)
-        self.pushButton3.setToolTip("<h5></h5>")
+        self.searchFilterButton = QPushButton("Search/Filter", self)
+        self.searchFilterButton.move(360, 200)
+        self.searchFilterButton.resize(250, 40)
+        self.searchFilterButton.setToolTip("<h5></h5>")
 
-        self.pushButton3.clicked.connect(self.window2)
+        self.searchFilterButton.clicked.connect(self.searchFilterButtonClicked)
 
         # Button 4 Changes window to the Manage Graph
-        self.pushButton4 = QPushButton("Manage Graph", self)
-        self.pushButton4.move(80, 200)
-        self.pushButton4.resize(250, 40)
-        self.pushButton4.setToolTip("<h5></h5>")
+        self.manageGraphButton = QPushButton("Manage Graph", self)
+        self.manageGraphButton.move(80, 200)
+        self.manageGraphButton.resize(250, 40)
+        self.manageGraphButton.setToolTip("<h5></h5>")
 
-        self.pushButton4.clicked.connect(self.window3)
+        self.manageGraphButton.clicked.connect(self.manageGraphButtonClicked)
 
         self.main_window()
 
@@ -116,22 +116,22 @@ class Window(QMainWindow):
         self.setGeometry(self.top, self.left, self.width, self.height)
         self.show()
 
-    def window2(self):
+    def searchFilterButtonClicked(self):
         self.w = Window2()
         self.w.show()
         self.hide()
 
-    def window3(self):
+    def manageGraphButtonClicked(self):
         self.w = Window3()
         self.w.show()
         self.hide()
 
-    def window4(self):
+    def eventConfigButtonClicked(self):
         self.w = Window4()
         self.w.show()
         self.hide()
 
-    def window5(self):
+    def actionReportButtonClicked(self):
         self.w = Window5()
         self.w.show()
         self.hide()
