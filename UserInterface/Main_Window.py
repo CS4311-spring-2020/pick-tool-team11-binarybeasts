@@ -5,53 +5,6 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 from PyQt5.QtGui import *
 
 
-class Window5(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Enforcement Action Report")
-        #Window Dimensions
-        self.top = 600
-        self.left = 300
-        self.width = 680
-        self.height = 580
-        self.setGeometry(self.top, self.left, self.width, self.height)
-
-class Window4(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Event Configuration")
-        #Window Dimensions
-        self.top = 600
-        self.left = 300
-        self.width = 680
-        self.height = 580
-        self.setGeometry(self.top, self.left, self.width, self.height)
-
-
-class Window3(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Manage Graph")
-        #Window Dimensions
-        self.top = 600
-        self.left = 300
-        self.width = 680
-        self.height = 580
-        self.setGeometry(self.top, self.left, self.width, self.height)
-
-
-class Window2(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Search/Filter")
-
-        #Window Dimensions
-        self.top = 600
-        self.left = 300
-        self.width = 680
-        self.height = 580
-        self.setGeometry(self.top, self.left, self.width, self.height)
-
 class Window(QMainWindow):
     def __init__(self):
         super().__init__()
