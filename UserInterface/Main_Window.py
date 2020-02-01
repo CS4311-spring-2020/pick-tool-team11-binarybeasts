@@ -1,7 +1,9 @@
 import sys
+from UserInterface import ActionReport, Configurations, Filter
 from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 from PyQt5.QtGui import *
+
 
 class Window5(QMainWindow):
     def __init__(self):
@@ -117,23 +119,25 @@ class Window(QMainWindow):
         self.show()
 
     def searchFilterButtonClicked(self):
-        self.w = Window2()
-        self.w.show()
+        self.filterWindow = QMainWindow()
+        Filter.FilterUi().setupUi(self.filterWindow)
+        self.filterWindow.show()
         self.hide()
 
     def manageGraphButtonClicked(self):
-        self.w = Window3()
-        self.w.show()
-        self.hide()
+        # TODO: Create the graph window class and have it pop up in this method
+        pass
 
     def eventConfigButtonClicked(self):
-        self.w = Window4()
-        self.w.show()
+        self.eventConfigWindow = QMainWindow()
+        Configurations.ConfigurationsUi().generateUi(self.eventConfigWindow)
+        self.eventConfigWindow.show()
         self.hide()
 
     def actionReportButtonClicked(self):
-        self.w = Window5()
-        self.w.show()
+        self.actionReportWindow = QMainWindow()
+        ActionReport.actionReport().generateUi(self.actionReportWindow)
+        self.actionReportWindow.show()
         self.hide()
 
 if __name__ == "__main__":
