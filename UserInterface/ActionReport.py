@@ -140,9 +140,9 @@ class actionReport(object):
 
     def addData(self, actionReportWindow):
         insert = QtCore.QCoreApplication.translate
-        actionReportWindow.setWindowTitle(insert("actionReportWindow", "Enforcement Action Report"))
+        actionReportWindow.setWindowTitle(insert("actionReportWindow", "Log Configuration"))
         # Filling in the action report headers
-        self.reportTableTitle.setTitle(insert("actionReportWindow", "Action Report"))
+        self.reportTableTitle.setTitle(insert("actionReportWindow", "Enforcement Action Report"))
         self.reportTable.headerItem().setText(0, insert("actionReportWindow", "Log File"))
         self.reportTable.headerItem().setText(1, insert("actionReportWindow", "Source Path"))
         self.reportTable.headerItem().setText(2, insert("actionReportWindow", "Cleansing Status"))
