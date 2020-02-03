@@ -1,11 +1,9 @@
 import sys
-from UserInterface import ActionReport, Configurations, Filter
-from PyQt5.QtWidgets import *
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel
-from PyQt5.QtGui import *
+import ActionReport, Configurations, Filter
+from PyQt5 import QtWidgets, QtGui
 
 
-class Window(QMainWindow):
+class Window(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
 
@@ -17,7 +15,7 @@ class Window(QMainWindow):
 
 
         # Button Changes window to the Event Configuration window
-        self.eventConfigButton = QPushButton("Event Configuration", self)
+        self.eventConfigButton = QtWidgets.QPushButton("Event Configuration", self)
         self.eventConfigButton.move(360, 150)
         self.eventConfigButton.resize(250, 40)
         self.eventConfigButton.setToolTip("<h5></h5>")
@@ -25,7 +23,7 @@ class Window(QMainWindow):
         self.eventConfigButton.clicked.connect(self.eventConfigButtonClicked)
 
         # Button 2 Changes window to the Enforcement Action Report window
-        self.actionReportButton = QPushButton("Enforcement Action Report", self)
+        self.actionReportButton = QtWidgets.QPushButton("Enforcement Action Report", self)
         self.actionReportButton.move(80, 150)
         self.actionReportButton.resize(250, 40)
         self.actionReportButton.setToolTip("<h5></h5>")
@@ -33,7 +31,7 @@ class Window(QMainWindow):
         self.actionReportButton.clicked.connect(self.actionReportButtonClicked)
 
         # Button 3 Changes window to the Search/Filter window
-        self.searchFilterButton = QPushButton("Search/Filter", self)
+        self.searchFilterButton = QtWidgets.QPushButton("Search/Filter", self)
         self.searchFilterButton.move(360, 200)
         self.searchFilterButton.resize(250, 40)
         self.searchFilterButton.setToolTip("<h5></h5>")
@@ -41,7 +39,7 @@ class Window(QMainWindow):
         self.searchFilterButton.clicked.connect(self.searchFilterButtonClicked)
 
         # Button 4 Changes window to the Manage Graph
-        self.manageGraphButton = QPushButton("Manage Graph", self)
+        self.manageGraphButton = QtWidgets.QPushButton("Manage Graph", self)
         self.manageGraphButton.move(80, 200)
         self.manageGraphButton.resize(250, 40)
         self.manageGraphButton.setToolTip("<h5></h5>")
@@ -52,18 +50,18 @@ class Window(QMainWindow):
 
     def main_window(self):
 
-        self.label = QLabel("<h3>PICK Tool</h3>", self)
+        self.label = QtWidgets.QLabel("<h3>PICK Tool</h3>", self)
         self.label.move(300, 80)
-        self.label = QLabel(self)
+        self.label = QtWidgets.QLabel(self)
 
-        pixmap = QPixmap("pick0.png")
-        lbl = QLabel(self)
+        pixmap = QtGui.QPixmap("pick0.png")
+        lbl = QtWidgets.QLabel(self)
         lbl.setPixmap(pixmap)
         lbl.move(400, 10)
         lbl.resize(128, 128)
 
-        pixmap = QPixmap("pick0.png")
-        lbl = QLabel(self)
+        pixmap = QtGui.QPixmap("pick0.png")
+        lbl = QtWidgets.QLabel(self)
         lbl.setPixmap(pixmap)
         lbl.move(170, 10)
         lbl.resize(128, 128)
@@ -72,7 +70,7 @@ class Window(QMainWindow):
         self.show()
 
     def searchFilterButtonClicked(self):
-        self.filterWindow = QMainWindow()
+        self.filterWindow = QtWidgets.QMainWindow()
         Filter.FilterUi().setupUi(self.filterWindow)
         self.filterWindow.show()
         self.hide()
@@ -82,18 +80,18 @@ class Window(QMainWindow):
         pass
 
     def eventConfigButtonClicked(self):
-        self.eventConfigWindow = QMainWindow()
+        self.eventConfigWindow = QtWidgets.QMainWindow()
         Configurations.ConfigurationsUi().generateUi(self.eventConfigWindow)
         self.eventConfigWindow.show()
         self.hide()
 
     def actionReportButtonClicked(self):
-        self.actionReportWindow = QMainWindow()
+        self.actionReportWindow = QtWidgets.QMainWindow()
         ActionReport.actionReport().generateUi(self.actionReportWindow)
         self.actionReportWindow.show()
         self.hide()
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     ex = Window()
     sys.exit(app.exec())
