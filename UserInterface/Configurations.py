@@ -16,7 +16,7 @@ class ConfigurationsUi(object):
 #*-------------------------Menu bar creation & properties----------------------------------------------------*#      
         #Menu bar creation & properties
         self.menubar = QtWidgets.QMenuBar(configurationsWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 870, 22))
         self.menubar.setObjectName("menubar")
         self.menuOptions = QtWidgets.QMenu(self.menubar)
         self.menuOptions.setObjectName("menuOptions")
@@ -233,66 +233,66 @@ class ConfigurationsUi(object):
         QtCore.QMetaObject.connectSlotsByName(configurationsWindow)
 
     def addData(self, configurationsWindow):
-        _translate = QtCore.QCoreApplication.translate
-        configurationsWindow.setWindowTitle(_translate("configurationsWindow", "Configurations"))
+        insert = QtCore.QCoreApplication.translate
+        configurationsWindow.setWindowTitle(insert("configurationsWindow", "Configurations"))
 #*-------------------------Team Configuration Tab-------------------------------------------------*#
-        self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.TeamConfigurationTab), _translate("configurationsWindow", "Team Configuration"))
+        self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.TeamConfigurationTab), insert("configurationsWindow", "Team Configuration"))
         #set checkbox
-        self.leadCheckbox.setText(_translate("configurationsWindow", "Lead"))
+        self.leadCheckbox.setText(insert("configurationsWindow", "Lead"))
         #Set Labels
-        self.leadIPAddrLabel.setText(_translate("configurationsWindow", "Lead IP Address:"))
-        self.numOfConnectionsLabel.setText(_translate("configurationsWindow", "No. of estrablished connections:"))
+        self.leadIPAddrLabel.setText(insert("configurationsWindow", "Lead IP Address:"))
+        self.numOfConnectionsLabel.setText(insert("configurationsWindow", "No. of estrablished connections:"))
         #Set Button
-        self.connectBttn.setText(_translate("configurationsWindow", "Connect"))
+        self.connectBttn.setText(insert("configurationsWindow", "Connect"))
         #Set text fields
-        self.numOfConnections.setText(_translate("configurationsWindow", "5"))  
+        self.numOfConnections.setText(insert("configurationsWindow", "5"))  
 #*--------------------------Event Configuration Tab--------------------------------------------------*#
-        self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.EventConfigurationTab), _translate("configurationsWindow", "Event Configuration"))
+        self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.EventConfigurationTab), insert("configurationsWindow", "Event Configuration"))
         #Set labels
-        self.eventNameLabel.setText(_translate("configurationsWindow", "Event Name:"))
-        self.eventDescLabel.setText(_translate("configurationsWindow", "Event Description:"))
-        self.eventStartLabel.setText(_translate("configurationsWindow", "Event Start Timestamp:"))
-        self.eventEndLabel.setText(_translate("configurationsWindow", "Event End Timestamp:"))
+        self.eventNameLabel.setText(insert("configurationsWindow", "Event Name:"))
+        self.eventDescLabel.setText(insert("configurationsWindow", "Event Description:"))
+        self.eventStartLabel.setText(insert("configurationsWindow", "Event Start Timestamp:"))
+        self.eventEndLabel.setText(insert("configurationsWindow", "Event End Timestamp:"))
         #Set buttons
-        self.saveEventBttn.setText(_translate("configurationsWindow", "Save Event"))
+        self.saveEventBttn.setText(insert("configurationsWindow", "Save Event"))
 #*--------------------------Directory Configuration Tab--------------------------------------------------*#
-        self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.DirectoryConfigurationTab), _translate("configurationsWindow", "Directory Configuration"))
+        self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.DirectoryConfigurationTab), insert("configurationsWindow", "Directory Configuration"))
         #Set Labels
-        self.rootDirectoryLabel.setText(_translate("configurationsWindow", "Root Directory:"))
-        self.redTeamLabel.setText(_translate("configurationsWindow", "Red Team Folder:"))
-        self.blueTeamLabel.setText(_translate("configurationsWindow", "Blue Team Folder:"))
-        self.whiteTeamLabel.setText(_translate("configurationsWindow", "White Team Folder:"))
+        self.rootDirectoryLabel.setText(insert("configurationsWindow", "Root Directory:"))
+        self.redTeamLabel.setText(insert("configurationsWindow", "Red Team Folder:"))
+        self.blueTeamLabel.setText(insert("configurationsWindow", "Blue Team Folder:"))
+        self.whiteTeamLabel.setText(insert("configurationsWindow", "White Team Folder:"))
         #Set buttons
-        self.startDataIngestionBttn.setText(_translate("configurationsWindow", "Start Data Ingestion"))
+        self.startDataIngestionBttn.setText(insert("configurationsWindow", "Start Data Ingestion"))
 #*--------------------------Vector Configuration Tab--------------------------------------------------*#
-        self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.VectorConfigurationTab), _translate("configurationsWindow", "Vector Configuration"))
+        self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.VectorConfigurationTab), insert("configurationsWindow", "Vector Configuration"))
         #Set labels
-        self.vectorNameLabel.setText(_translate("configurationsWindow", "Vector Name:"))
-        self.vectorDescLabel.setText(_translate("configurationsWindow", "Vector Description:"))
+        self.vectorNameLabel.setText(insert("configurationsWindow", "Vector Name:"))
+        self.vectorDescLabel.setText(insert("configurationsWindow", "Vector Description:"))
         #Set buttons
-        self.addVectorBttn.setText(_translate("configurationsWindow", "Add Vector"))
-        self.deleteVectorBttn.setText(_translate("configurationsWindow", "Delete Vector"))
+        self.addVectorBttn.setText(insert("configurationsWindow", "Add Vector"))
+        self.deleteVectorBttn.setText(insert("configurationsWindow", "Delete Vector"))
         #Set Vector table headers
         self.vectorTable.setSortingEnabled(True)
-        self.vectorTable.headerItem().setText(0, _translate("configurationsWindow", "Vector Name"))
-        self.vectorTable.headerItem().setText(1, _translate("configurationsWindow", "Vector Description"))
+        self.vectorTable.headerItem().setText(0, insert("configurationsWindow", "Vector Name"))
+        self.vectorTable.headerItem().setText(1, insert("configurationsWindow", "Vector Description"))
         __sortingEnabled = self.vectorTable.isSortingEnabled()
         self.vectorTable.setSortingEnabled(False)
         #set vector table data
-        self.vectorTable.topLevelItem(0).setText(0, _translate("configurationsWindow", "Vector C"))
-        self.vectorTable.topLevelItem(0).setText(1, _translate("configurationsWindow", "Testing Vector A"))
-        self.vectorTable.topLevelItem(1).setText(0, _translate("configurationsWindow", "Vector B"))
-        self.vectorTable.topLevelItem(1).setText(1, _translate("configurationsWindow", "Testing Vector B"))
-        self.vectorTable.topLevelItem(2).setText(0, _translate("configurationsWindow", "Vector A"))
-        self.vectorTable.topLevelItem(2).setText(1, _translate("configurationsWindow", "Testing Vector C"))
+        self.vectorTable.topLevelItem(0).setText(0, insert("configurationsWindow", "Vector C"))
+        self.vectorTable.topLevelItem(0).setText(1, insert("configurationsWindow", "Testing Vector A"))
+        self.vectorTable.topLevelItem(1).setText(0, insert("configurationsWindow", "Vector B"))
+        self.vectorTable.topLevelItem(1).setText(1, insert("configurationsWindow", "Testing Vector B"))
+        self.vectorTable.topLevelItem(2).setText(0, insert("configurationsWindow", "Vector A"))
+        self.vectorTable.topLevelItem(2).setText(1, insert("configurationsWindow", "Testing Vector C"))
         self.vectorTable.setSortingEnabled(__sortingEnabled)
 #*--------------------------Menu Options--------------------------------------------------*#
         #set menu options
-        self.menuOptions.setTitle(_translate("configurationsWindow", "Menu"))
-        self.actionConfigurations.setText(_translate("configurationsWindow", "Configurations"))
-        self.actionEnforcement_Action_Report.setText(_translate("configurationsWindow", "Enforcement Action Report"))
-        self.actionSearch_Filter_Log_Entries.setText(_translate("configurationsWindow", "Search/Filter Log Entries"))
-        self.actionManage_Graph.setText(_translate("configurationsWindow", "Manage Graph"))
+        self.menuOptions.setTitle(insert("configurationsWindow", "Menu"))
+        self.actionConfigurations.setText(insert("configurationsWindow", "Configurations"))
+        self.actionEnforcement_Action_Report.setText(insert("configurationsWindow", "Enforcement Action Report"))
+        self.actionSearch_Filter_Log_Entries.setText(insert("configurationsWindow", "Search/Filter Log Entries"))
+        self.actionManage_Graph.setText(insert("configurationsWindow", "Manage Graph"))
 
 
 if __name__ == "__main__":
