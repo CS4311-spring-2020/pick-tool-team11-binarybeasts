@@ -73,7 +73,6 @@ class Window(QtWidgets.QMainWindow):
         self.filterWindow = QtWidgets.QMainWindow()
         Filter.FilterUi().setupUi(self.filterWindow)
         self.filterWindow.show()
-        self.hide()
 
     def manageGraphButtonClicked(self):
         # TODO: Create the graph window class and have it pop up in this method
@@ -83,13 +82,11 @@ class Window(QtWidgets.QMainWindow):
         self.eventConfigWindow = QtWidgets.QMainWindow()
         Configurations.ConfigurationsUi().generateUi(self.eventConfigWindow)
         self.eventConfigWindow.show()
-        self.hide()
 
     def actionReportButtonClicked(self):
         self.actionReportWindow = QtWidgets.QMainWindow()
         ActionReport.actionReport().generateUi(self.actionReportWindow)
         self.actionReportWindow.show()
-        self.hide()
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
