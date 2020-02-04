@@ -11,6 +11,10 @@ GRAPH = 'GRAPH'
 
 class PickMenuBar(QMenuBar):
 
+    # USE IN WINDOW YOU WANT TO USE MENU BAR IN
+    # self.menubar = Common.PickMenuBar(<WINDOW NAME>, omit=Common.<WINDOW ENUM>)
+    # <WINDOW NAME>.setMenuBar(self.menubar)
+
     def __init__(self, parent: typing.Optional[QWidget] = ..., omit='') -> None:
         print("OMIT ====" + omit)
         super().__init__(parent)
