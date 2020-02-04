@@ -1,5 +1,6 @@
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
+import Common
 
 
 class actionReport(object):
@@ -88,36 +89,9 @@ class actionReport(object):
 
         actionReportWindow.setCentralWidget(self.windowBackground)
         # this is creating the menu bar options
-        self.menuBarButton = QtWidgets.QMenuBar(actionReportWindow)
-        # setting the position of the menu button option
-        self.menuBarButton.setGeometry(QtCore.QRect(0, 0, 683, 22))
-        self.menuBarButton.setObjectName("menuBarButton")
-        self.menuMenu = QtWidgets.QMenu(self.menuBarButton)
-        self.menuMenu.setObjectName("menuMenu")
-        actionReportWindow.setMenuBar(self.menuBarButton)
+        self.menubar = Common.PickMenuBar(actionReportWindow, omit=Common.ACTIONREPORT)
+        actionReportWindow.setMenuBar(self.menubar)
 
-        self.statusbar = QtWidgets.QStatusBar(actionReportWindow)
-        self.statusbar.setObjectName("statusbar")
-        actionReportWindow.setStatusBar(self.statusbar)
-        # adding the Event Configuration option
-        self.menuEvent_Configuration = QtWidgets.QAction(actionReportWindow)
-        self.menuEvent_Configuration.setObjectName("menuEvent_Configuration")
-        # adding the Enforcement Action Report option
-        self.menuEnforcement_Action_Report = QtWidgets.QAction(actionReportWindow)
-        self.menuEnforcement_Action_Report.setObjectName("menuEnforcement_Action_Report")
-        # adding the Search/Filter Log Entries option
-        self.menuSearch_Filter_Log_Entries = QtWidgets.QAction(actionReportWindow)
-        self.menuSearch_Filter_Log_Entries.setObjectName("menuSearch_Filter_Log_Entries")
-        # adding the Manage Graph option
-        self.menuManage_Graph = QtWidgets.QAction(actionReportWindow)
-        self.menuManage_Graph.setObjectName("menuManage_Graph")
-
-        # options to add Action to each of the buttons
-        self.menuMenu.addAction(self.menuEvent_Configuration)
-        self.menuMenu.addAction(self.menuEnforcement_Action_Report)
-        self.menuMenu.addAction(self.menuSearch_Filter_Log_Entries)
-        self.menuMenu.addAction(self.menuManage_Graph)
-        self.menuBarButton.addAction(self.menuMenu.menuAction())
         # adds the data to the window
         self.addData(actionReportWindow)
         
@@ -196,11 +170,6 @@ class actionReport(object):
         # adding data to the buttons. (Filling them in)
         self.overrideButton.setText(insert("actionReportWindow", "Override Errors"))
         self.expandButton.setText(insert("actionReportWindow", "Expand Selected Log File"))
-        self.menuMenu.setTitle(insert("actionReportWindow", "Menu"))
-        self.menuEvent_Configuration.setText(insert("actionReportWindow", "Event Configuration"))
-        self.menuEnforcement_Action_Report.setText(insert("actionReportWindow", "Enforcement Action Report"))
-        self.menuSearch_Filter_Log_Entries.setText(insert("actionReportWindow", "Search/Filter Log Entries"))
-        self.menuManage_Graph.setText(insert("actionReportWindow", "Manage Graph"))
 
 
 if __name__ == "__main__":

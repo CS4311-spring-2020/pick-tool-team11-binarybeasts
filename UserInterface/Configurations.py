@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+import Common
 
 
 class ConfigurationsUi(object):
@@ -13,32 +14,9 @@ class ConfigurationsUi(object):
         self.gridLayout_5.setObjectName("gridLayout_5")
 
 
-#*-------------------------Menu bar creation & properties----------------------------------------------------*#      
-        #Menu bar creation & properties
-        self.menubar = QtWidgets.QMenuBar(configurationsWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 870, 22))
-        self.menubar.setObjectName("menubar")
-        self.menuOptions = QtWidgets.QMenu(self.menubar)
-        self.menuOptions.setObjectName("menuOptions")
+#*-------------------------Menu bar creation & properties----------------------------------------------------*#
+        self.menubar = Common.PickMenuBar(configurationsWindow, omit=Common.CONFIGURATIONS)
         configurationsWindow.setMenuBar(self.menubar)
-        #configurations menu option
-        self.actionConfigurations = QtWidgets.QAction(configurationsWindow)
-        self.actionConfigurations.setObjectName("actionConfigurations")
-        #enforcement action report meny option
-        self.actionEnforcement_Action_Report = QtWidgets.QAction(configurationsWindow)
-        self.actionEnforcement_Action_Report.setObjectName("actionEnforcement_Action_Report")
-        #search/filter log entries menu option
-        self.actionSearch_Filter_Log_Entries = QtWidgets.QAction(configurationsWindow)
-        self.actionSearch_Filter_Log_Entries.setObjectName("actionSearch_Filter_Log_Entries")
-        #manage graph menu option
-        self.actionManage_Graph = QtWidgets.QAction(configurationsWindow)
-        self.actionManage_Graph.setObjectName("actionManage_Graph")
-        #actions for each menu option
-        self.menuOptions.addAction(self.actionConfigurations)
-        self.menuOptions.addAction(self.actionEnforcement_Action_Report)
-        self.menuOptions.addAction(self.actionSearch_Filter_Log_Entries)
-        self.menuOptions.addAction(self.actionManage_Graph)
-        self.menubar.addAction(self.menuOptions.menuAction())
 #*-------------------------Configuration Tabs properties----------------------------------------------------*#
         self.ConfigurationTabs = QtWidgets.QTabWidget(self.windowBackground)
         self.ConfigurationTabs.setEnabled(True)
@@ -286,13 +264,6 @@ class ConfigurationsUi(object):
         self.vectorTable.topLevelItem(2).setText(0, insert("configurationsWindow", "Vector A"))
         self.vectorTable.topLevelItem(2).setText(1, insert("configurationsWindow", "Testing Vector C"))
         self.vectorTable.setSortingEnabled(__sortingEnabled)
-#*--------------------------Menu Options--------------------------------------------------*#
-        #set menu options
-        self.menuOptions.setTitle(insert("configurationsWindow", "Menu"))
-        self.actionConfigurations.setText(insert("configurationsWindow", "Configurations"))
-        self.actionEnforcement_Action_Report.setText(insert("configurationsWindow", "Enforcement Action Report"))
-        self.actionSearch_Filter_Log_Entries.setText(insert("configurationsWindow", "Search/Filter Log Entries"))
-        self.actionManage_Graph.setText(insert("configurationsWindow", "Manage Graph"))
 
 
 if __name__ == "__main__":
