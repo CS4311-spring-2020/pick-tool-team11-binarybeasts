@@ -1,9 +1,9 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import (QApplication)
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 
 
 class actionReport(object):
-    app = QApplication([])
+    app = QtWidgets.QApplication([])
     app.setStyle('Fusion')
 
     def generateUi(self, actionReportWindow):
