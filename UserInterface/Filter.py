@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+import Common
 import sys
 
 
@@ -127,28 +128,8 @@ class FilterUi(object):
         self.verticalLayout.addWidget(self.vectorViewLayout)
         SearchFilterWindow.setCentralWidget(self.mainVerticalView)
 
-        # Create menu bar
-        self.menubar = QtWidgets.QMenuBar(SearchFilterWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 870, 22))
-        self.menubar.setObjectName("menubar")
-        self.menuMenu = QtWidgets.QMenu(self.menubar)
-        self.menuMenu.setObjectName("menuMenu")
+        self.menubar = Common.PickMenuBar(SearchFilterWindow, omit=Common.FILTER)
         SearchFilterWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(SearchFilterWindow)
-        self.statusbar.setObjectName("statusbar")
-        SearchFilterWindow.setStatusBar(self.statusbar)
-        self.actionEvent_Configuration = QtWidgets.QAction(SearchFilterWindow)
-        self.actionEvent_Configuration.setObjectName("actionEvent_Configuration")
-        self.actionEnforcement_Action_Report = QtWidgets.QAction(SearchFilterWindow)
-        self.actionEnforcement_Action_Report.setObjectName("actionEnforcement_Action_Report")
-        self.actionSearch_Filter_Log_Entries = QtWidgets.QAction(SearchFilterWindow)
-        self.actionSearch_Filter_Log_Entries.setObjectName("actionSearch_Filter_Log_Entries")
-        self.actionManage_Graph = QtWidgets.QAction(SearchFilterWindow)
-        self.actionManage_Graph.setObjectName("actionManage_Graph")
-        self.menuMenu.addAction(self.actionEvent_Configuration)
-        self.menuMenu.addAction(self.actionEnforcement_Action_Report)
-        self.menuMenu.addAction(self.actionManage_Graph)
-        self.menubar.addAction(self.menuMenu.menuAction())
 
         self.addData(SearchFilterWindow)
         QtCore.QMetaObject.connectSlotsByName(SearchFilterWindow)
@@ -303,13 +284,6 @@ class FilterUi(object):
         self.vectorView.topLevelItem(9).setText(5, insert("SearchFilterWindow", "Blue"))
         self.vectorView.topLevelItem(9).setText(6, insert("SearchFilterWindow", "/path/incident/report2.pd"))
         self.vectorView.setSortingEnabled(__sortingEnabled)
-
-        # Add text to menu items
-        self.menuMenu.setTitle(insert("SearchFilterWindow", "Menu"))
-        self.actionEvent_Configuration.setText(insert("SearchFilterWindow", "Event Configuration"))
-        self.actionEnforcement_Action_Report.setText(insert("SearchFilterWindow", "Enforcement Action Report"))
-        self.actionSearch_Filter_Log_Entries.setText(insert("SearchFilterWindow", "Search/Filter Log Entries"))
-        self.actionManage_Graph.setText(insert("SearchFilterWindow", "Manage Graph"))
 
 
 if __name__ == "__main__":
