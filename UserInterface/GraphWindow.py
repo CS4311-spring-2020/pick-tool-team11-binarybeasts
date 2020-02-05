@@ -1,13 +1,13 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-# import Common
+import Common
 
 
 class Ui_GrapWindow(object):
-    def setupUi(self, GrapWindow):
-        GrapWindow.setObjectName("GrapWindow")
-        GrapWindow.resize(1105, 857)
+    def setupUi(self, GraphWindow):
+        GraphWindow.setObjectName("GrapWindow")
+        GraphWindow.resize(1105, 857)
 
-        self.centralwidget = QtWidgets.QWidget(GrapWindow)
+        self.centralwidget = QtWidgets.QWidget(GraphWindow)
         self.centralwidget.setObjectName("centralwidget")
 
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -504,35 +504,13 @@ class Ui_GrapWindow(object):
 
         self.verticalLayout.addWidget(self.groupBoxTabularView)
 
-        GrapWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(GrapWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1105, 21))
-        self.menubar.setObjectName("menubar")
-        self.menuMenu = QtWidgets.QMenu(self.menubar)
-        self.menuMenu.setObjectName("menuMenu")
-        GrapWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(GrapWindow)
-        self.statusbar.setObjectName("statusbar")
-        GrapWindow.setStatusBar(self.statusbar)
-        self.actionEvent_Configurations = QtWidgets.QAction(GrapWindow)
-        self.actionEvent_Configurations.setObjectName("actionEvent_Configurations")
-        self.actionManage_Graph = QtWidgets.QAction(GrapWindow)
-        self.actionManage_Graph.setObjectName("actionManage_Graph")
-        self.actionSerach_Filter_Log_Entries = QtWidgets.QAction(GrapWindow)
-        self.actionSerach_Filter_Log_Entries.setObjectName("actionSerach_Filter_Log_Entries")
-        self.actionEnforcement_Action_Report = QtWidgets.QAction(GrapWindow)
-        self.actionEnforcement_Action_Report.setObjectName("actionEnforcement_Action_Report")
-        self.menuMenu.addAction(self.actionEvent_Configurations)
-        self.menuMenu.addAction(self.actionSerach_Filter_Log_Entries)
-        self.menuMenu.addAction(self.actionEnforcement_Action_Report)
-        self.menuMenu.addAction(self.actionManage_Graph)
-        self.menubar.addAction(self.menuMenu.menuAction())
+        GraphWindow.setCentralWidget(self.centralwidget)
 
-        # self.menubar = Common.PickMenuBar(GrapWindow, omit=Common.GRAPH)
-        # GrapWindow.setMenuBar(self.menubar)
+        self.menubar = Common.PickMenuBar(GraphWindow, omit=Common.GRAPH)
+        GraphWindow.setMenuBar(self.menubar)
 
-        self.retranslateUi(GrapWindow)
-        QtCore.QMetaObject.connectSlotsByName(GrapWindow)
+        self.retranslateUi(GraphWindow)
+        QtCore.QMetaObject.connectSlotsByName(GraphWindow)
 
     def retranslateUi(self, GrapWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -635,11 +613,6 @@ class Ui_GrapWindow(object):
         __sortingEnabled = self.tableWidgetRelationships.isSortingEnabled()
         self.tableWidgetRelationships.setSortingEnabled(False)
         self.tableWidgetRelationships.setSortingEnabled(__sortingEnabled)
-        self.menuMenu.setTitle(_translate("GrapWindow", "Menu"))
-        self.actionEvent_Configurations.setText(_translate("GrapWindow", "Event Configurations"))
-        self.actionManage_Graph.setText(_translate("GrapWindow", "Manage Graph"))
-        self.actionSerach_Filter_Log_Entries.setText(_translate("GrapWindow", "Serach/Filter Log Entries"))
-        self.actionEnforcement_Action_Report.setText(_translate("GrapWindow", "Enforcement Action Report"))
 
 
 if __name__ == "__main__":
