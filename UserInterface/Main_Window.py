@@ -1,5 +1,5 @@
 import sys
-import ActionReport, Configurations, Filter
+import ActionReport, Configurations, Filter, GraphWindow
 from PyQt5 import QtWidgets, QtGui
 
 
@@ -75,8 +75,9 @@ class Window(QtWidgets.QMainWindow):
         self.filterWindow.show()
 
     def manageGraphButtonClicked(self):
-        # TODO: Create the graph window class and have it pop up in this method
-        pass
+        self.graphWindow = QtWidgets.QMainWindow()
+        GraphWindow.Ui_GrapWindow().setupUi(self.graphWindow)
+        self.graphWindow.show()
 
     def eventConfigButtonClicked(self):
         self.eventConfigWindow = QtWidgets.QMainWindow()
