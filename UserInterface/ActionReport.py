@@ -78,14 +78,14 @@ class actionReport(object):
         self.verticalLayout.addWidget(self.selectedLogFile)
 
         # creating an override button at the bottom of the 2 tables
-        self.overrideButton = QtWidgets.QPushButton(self.windowBackground)
-        self.overrideButton.setObjectName("overrideButton")
-        self.verticalLayout.addWidget(self.overrideButton)
+        self.cancelButton = QtWidgets.QPushButton(self.windowBackground)
+        self.cancelButton.setObjectName("cancelButton")
+        self.verticalLayout.addWidget(self.cancelButton)
         
         # creating an expand button at the bottom of the 2 tables
-        self.expandButton = QtWidgets.QPushButton(self.windowBackground)
-        self.expandButton.setObjectName("expandButton")
-        self.verticalLayout.addWidget(self.expandButton)
+        self.validateButton = QtWidgets.QPushButton(self.windowBackground)
+        self.validateButton.setObjectName("validateButton")
+        self.verticalLayout.addWidget(self.validateButton)
 
         actionReportWindow.setCentralWidget(self.windowBackground)
         # this is creating the menu bar options
@@ -99,18 +99,18 @@ class actionReport(object):
         #self.reportTable.itemPressed['QTreeWidgetItem*','int'].connect(self.errorDescription.expandAll)
         
         # whenever the override button is pressed, hide the error description table.
-        self.overrideButton.pressed.connect(self.selectedLogFile.hide)
+        self.cancelButton.pressed.connect(self.selectedLogFile.hide)
 
         # whenever an item is pressed in the action report table, hide the error description table.
         #self.reportTable.itemPressed['QTreeWidgetItem*','int'].connect(self.errorDescription.expandAll)
         
         # whenever the expand button is pressed, expand the error description table.
-        self.expandButton.pressed.connect(self.selectedLogFile.show)
+        self.validateButton.pressed.connect(self.selectedLogFile.show)
 
         QtCore.QMetaObject.connectSlotsByName(actionReportWindow)
         # sets the tab order for the user
         actionReportWindow.setTabOrder(self.reportTable, self.errorDescription)
-        actionReportWindow.setTabOrder(self.errorDescription, self.overrideButton)
+        actionReportWindow.setTabOrder(self.errorDescription, self.cancelButton)
 
     def addData(self, actionReportWindow):
         insert = QtCore.QCoreApplication.translate
@@ -168,8 +168,8 @@ class actionReport(object):
         self.errorDescription.topLevelItem(4).setText(1, insert("actionReportWindow", "No date is found ...."))
         self.errorDescription.setSortingEnabled(__sortingEnabled)
         # adding data to the buttons. (Filling them in)
-        self.overrideButton.setText(insert("actionReportWindow", "Override Errors"))
-        self.expandButton.setText(insert("actionReportWindow", "Expand Selected Log File"))
+        self.cancelButton.setText(insert("actionReportWindow", "Cancel Selected Log File"))
+        self.validateButton.setText(insert("actionReportWindow", "Validate Selected Log File"))
 
 
 if __name__ == "__main__":
