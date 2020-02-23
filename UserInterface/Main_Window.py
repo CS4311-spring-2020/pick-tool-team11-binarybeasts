@@ -76,7 +76,7 @@ class Window(QtWidgets.QMainWindow):
 
     def manageGraphButtonClicked(self):
         self.graphWindow = QtWidgets.QMainWindow()
-        GraphWindow.Ui_GrapWindow().setupUi(self.graphWindow)
+        GraphWindow.Ui_GraphWindow().setupUi(self.graphWindow)
         self.graphWindow.show()
 
     def eventConfigButtonClicked(self):
