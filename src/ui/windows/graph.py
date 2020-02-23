@@ -1,15 +1,14 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from ui.common import menu_bar
 
-import Common
 
-
-class Ui_GraphWindow(object):
-    def setupUi(self, GraphWindow):
-        GraphWindow.setObjectName("GraphWindow")
-        GraphWindow.resize(1121, 873)
+class GraphWindow(object):
+    def setupUi(self, graphWindow):
+        graphWindow.setObjectName("GraphWindow")
+        graphWindow.resize(1121, 873)
 
         # -----------------------------layout for main window----------------------------------------------------------------------------------------#
-        self.centralwidget = QtWidgets.QWidget(GraphWindow)
+        self.centralwidget = QtWidgets.QWidget(graphWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -290,7 +289,7 @@ class Ui_GraphWindow(object):
         self.verticalLayout.addWidget(self.groupBoxTabularView)
 
         # -----------------------------docakable relationship window---------------------------------------------------------------------------------#
-        self.dockWidgetRelationship = QtWidgets.QDockWidget(GraphWindow)
+        self.dockWidgetRelationship = QtWidgets.QDockWidget(graphWindow)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -423,21 +422,21 @@ class Ui_GraphWindow(object):
         self.verticalLayout_3.addWidget(self.frameRelationshipButtons)
         self.verticalLayout_2.addWidget(self.groupBoxRelationships)
         self.dockWidgetRelationship.setWidget(self.dockWidgetContents)
-        GraphWindow.addDockWidget(QtCore.Qt.DockWidgetArea(8), self.dockWidgetRelationship)
+        graphWindow.addDockWidget(QtCore.Qt.DockWidgetArea(8), self.dockWidgetRelationship)
 
-        GraphWindow.setCentralWidget(self.centralwidget)
+        graphWindow.setCentralWidget(self.centralwidget)
 
-        self.menubar = Common.PickMenuBar(GraphWindow, omit=Common.GRAPH)
-        GraphWindow.setMenuBar(self.menubar)
+        self.menubar = menu_bar.PickMenuBar(graphWindow, omit=menu_bar.GRAPH)
+        graphWindow.setMenuBar(self.menubar)
 
-        self.retranslateUi(GraphWindow)
-        QtCore.QMetaObject.connectSlotsByName(GraphWindow)
+        self.retranslateUi(graphWindow)
+        QtCore.QMetaObject.connectSlotsByName(graphWindow)
 
         # -----------------------------fill in data--------------------------------------------------------------------------------------------------#
 
-    def retranslateUi(self, GraphWindow):
+    def retranslateUi(self, graphWindow):
         _translate = QtCore.QCoreApplication.translate
-        GraphWindow.setWindowTitle(_translate("GraphWindow", "Graph/Table View"))
+        graphWindow.setWindowTitle(_translate("GraphWindow", "Graph/Table View"))
         self.groupBoxVectorSelection.setTitle(_translate("GraphWindow", "Vector Selection"))
         self.labelVector.setText(_translate("GraphWindow", "Vector:"))
         self.comboBoxVector.setItemText(0, _translate("GraphWindow", "Selec A Vector"))
@@ -528,8 +527,8 @@ if __name__ == "__main__":
     import sys
 
     app = QtWidgets.QApplication(sys.argv)
-    GraphWindow = QtWidgets.QMainWindow()
-    ui = Ui_GraphWindow()
-    ui.setupUi(GraphWindow)
-    GraphWindow.show()
+    graphWindow = QtWidgets.QMainWindow()
+    ui = GraphWindow()
+    ui.setupUi(graphWindow)
+    graphWindow.show()
     sys.exit(app.exec_())

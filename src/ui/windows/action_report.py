@@ -1,9 +1,8 @@
-from PyQt5 import QtCore
-from PyQt5 import QtWidgets
-import Common
+from PyQt5 import QtCore, QtWidgets
+from ui.common import menu_bar
 
 
-class actionReport(object):
+class ActionReportWindow(object):
     app = QtWidgets.QApplication([])
     app.setStyle('Fusion')
 
@@ -89,7 +88,7 @@ class actionReport(object):
 
         actionReportWindow.setCentralWidget(self.windowBackground)
         # this is creating the menu bar options
-        self.menubar = Common.PickMenuBar(actionReportWindow, omit=Common.ACTIONREPORT)
+        self.menubar = menu_bar.PickMenuBar(actionReportWindow, omit=menu_bar.ACTIONREPORT)
         actionReportWindow.setMenuBar(self.menubar)
 
         # adds the data to the window
@@ -176,7 +175,7 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     actionReportWindow = QtWidgets.QMainWindow()
-    ui = actionReport()
+    ui = ActionReportWindow()
     ui.generateUi(actionReportWindow)
     actionReportWindow.show()
     sys.exit(app.exec_())

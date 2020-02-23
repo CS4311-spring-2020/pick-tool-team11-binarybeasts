@@ -1,8 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-import Common
+from ui.common import menu_bar
 
 
-class ConfigurationsUi(object):
+class ConfigurationsWindow(object):
     def generateUi(self, configurationsWindow):
         configurationsWindow.setObjectName("configurationsWindow")
         configurationsWindow.resize(800, 650)
@@ -15,7 +15,7 @@ class ConfigurationsUi(object):
 
 
 #*-------------------------Menu bar creation & properties----------------------------------------------------*#
-        self.menubar = Common.PickMenuBar(configurationsWindow, omit=Common.CONFIGURATIONS)
+        self.menubar = menu_bar.PickMenuBar(configurationsWindow, omit=menu_bar.CONFIGURATIONS)
         configurationsWindow.setMenuBar(self.menubar)
 #*-------------------------Configuration Tabs properties----------------------------------------------------*#
         self.ConfigurationTabs = QtWidgets.QTabWidget(self.windowBackground)
@@ -347,7 +347,7 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     configurationsWindow = QtWidgets.QMainWindow()
-    ui = ConfigurationsUi()
+    ui = ConfigurationsWindow()
     ui.generateUi(configurationsWindow)
     configurationsWindow.show()
     sys.exit(app.exec_())

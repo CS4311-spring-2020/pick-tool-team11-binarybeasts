@@ -1,6 +1,6 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
-import Common
 import sys
+from PyQt5 import QtCore, QtGui, QtWidgets
+from ui.common import menu_bar
 
 
 class FilterUi(object):
@@ -128,7 +128,7 @@ class FilterUi(object):
         self.verticalLayout.addWidget(self.vectorViewLayout)
         SearchFilterWindow.setCentralWidget(self.mainVerticalView)
 
-        self.menubar = Common.PickMenuBar(SearchFilterWindow, omit=Common.FILTER)
+        self.menubar = menu_bar.PickMenuBar(SearchFilterWindow, omit=menu_bar.FILTER)
         SearchFilterWindow.setMenuBar(self.menubar)
 
         self.addData(SearchFilterWindow)
