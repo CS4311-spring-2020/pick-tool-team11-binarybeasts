@@ -53,13 +53,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label.move(300, 80)
         self.label = QtWidgets.QLabel(self)
 
-        pixmap = QtGui.QPixmap("pick.png")
+        pixmap = QtGui.QPixmap("ui/windows/pick.png")
         lbl = QtWidgets.QLabel(self)
         lbl.setPixmap(pixmap)
         lbl.move(400, 10)
         lbl.resize(128, 128)
 
-        pixmap = QtGui.QPixmap("pick.png")
+        pixmap = QtGui.QPixmap("ui/windows/pick.png")
         lbl = QtWidgets.QLabel(self)
         lbl.setPixmap(pixmap)
         lbl.move(170, 10)

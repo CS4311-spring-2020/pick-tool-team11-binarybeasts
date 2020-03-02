@@ -260,7 +260,7 @@ class ConfigurationsWindow(object):
 
         self.searchIconBttn = QtWidgets.QPushButton(self.IconConfigurationTab)
         self.searchIconBttn.setObjectName("searchIconBttn")
-        self.gridLayout_6.addWidget(self.searchIconBttn, 2, 3, 1, 1)
+        self.gridLayout_6.addWidget(self.searchIconBttn, 2, 2, 1, 2)
 
         #Add Icon Button
         self.addIconBttn = QtWidgets.QPushButton(self.IconConfigurationTab)
@@ -326,13 +326,13 @@ class ConfigurationsWindow(object):
         self.startDataIngestionBttn.setText(insert("configurationsWindow", "Start Data Ingestion"))
 
         
-        self.searchDirectoryBttn.setIcon(QtGui.QIcon("folderBrowser.png"))
+        self.searchDirectoryBttn.setIcon(QtGui.QIcon("ui/windows/directoryPicker.png"))
         self.searchDirectoryBttn.clicked.connect(lambda: self.open_directory_dialog_box(self.rootDirectory))
-        self.searchRTFbttn.setIcon(QtGui.QIcon("folderBrowser.png"))
+        self.searchRTFbttn.setIcon(QtGui.QIcon("ui/windows/directoryPicker.png"))
         self.searchRTFbttn.clicked.connect(lambda: self.open_directory_dialog_box(self.redTeamFolder))
-        self.searchBTFbttn.setIcon(QtGui.QIcon("folderBrowser.png"))
+        self.searchBTFbttn.setIcon(QtGui.QIcon("ui/windows/directoryPicker.png"))
         self.searchBTFbttn.clicked.connect(lambda: self.open_directory_dialog_box(self.blueTeamFolder))
-        self.searchWTFbttn.setIcon(QtGui.QIcon("folderBrowser.png"))
+        self.searchWTFbttn.setIcon(QtGui.QIcon("ui/windows/directoryPicker.png"))
         self.searchWTFbttn.clicked.connect(lambda: self.open_directory_dialog_box(self.whiteTeamFolder))
         
 #*--------------------------Vector Configuration Tab--------------------------------------------------*#
@@ -362,7 +362,8 @@ class ConfigurationsWindow(object):
         self.addIconBttn.setText(insert("configurationsWindow", "Add Icon"))
         self.iconNameLabel.setText(insert("configurationsWindow", "Icon Name: "))
 
-        self.searchIconBttn.setIcon(QtGui.QIcon("folderBrowser.png"))
+        
+        self.searchIconBttn.setIcon(QtGui.QIcon("ui/windows/directoryPicker.png"))
         self.searchIconBttn.clicked.connect(lambda: self.open_file_dialog_box(self.iconSource))
 
         self.iconTable.setSortingEnabled(True)
@@ -391,7 +392,6 @@ class ConfigurationsWindow(object):
 
     def open_directory_dialog_box(self, lineEdit):
         directoryName = QtWidgets.QFileDialog.getExistingDirectory()
-        print("directory ======" + str(directoryName))
         if directoryName == "":
             return
         else:
