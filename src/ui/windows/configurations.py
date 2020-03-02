@@ -129,6 +129,10 @@ class ConfigurationsWindow(object):
         self.rootDirectory.setObjectName("rootDirectory")
         self.gridLayout_3.addWidget(self.rootDirectory, 0, 1, 1, 1)
 
+        self.searchDirectoryBttn = QtWidgets.QPushButton(self.DirectoryConfigurationTab)
+        self.searchDirectoryBttn.setObjectName("searchDirectoryBttn")
+        self.gridLayout_3.addWidget(self.searchDirectoryBttn, 0, 2, 1, 1)
+
         #red team folder
         self.redTeamLabel = QtWidgets.QLabel(self.DirectoryConfigurationTab)
         self.redTeamLabel.setObjectName("redTeamLabel")
@@ -136,6 +140,10 @@ class ConfigurationsWindow(object):
         self.redTeamFolder = QtWidgets.QLineEdit(self.DirectoryConfigurationTab)
         self.redTeamFolder.setObjectName("redTeamFolder")
         self.gridLayout_3.addWidget(self.redTeamFolder, 1, 1, 1, 1)
+
+        self.searchRTFbttn = QtWidgets.QPushButton(self.DirectoryConfigurationTab)
+        self.searchRTFbttn.setObjectName("searchRTFbttn")
+        self.gridLayout_3.addWidget(self.searchRTFbttn, 1, 2, 1, 1)
 
         #blue team folder
         self.blueTeamLabel = QtWidgets.QLabel(self.DirectoryConfigurationTab)
@@ -145,6 +153,10 @@ class ConfigurationsWindow(object):
         self.blueTeamFolder.setObjectName("blueTeamFolder")
         self.gridLayout_3.addWidget(self.blueTeamFolder, 2, 1, 1, 1)
 
+        self.searchBTFbttn = QtWidgets.QPushButton(self.DirectoryConfigurationTab)
+        self.searchBTFbttn.setObjectName("searchBTFbttn")
+        self.gridLayout_3.addWidget(self.searchBTFbttn, 2, 2, 1, 1)
+
         #white team folder
         self.whiteTeamLabel = QtWidgets.QLabel(self.DirectoryConfigurationTab)
         self.whiteTeamLabel.setObjectName("whiteTeamLabel")
@@ -152,6 +164,10 @@ class ConfigurationsWindow(object):
         self.whiteTeamFolder = QtWidgets.QLineEdit(self.DirectoryConfigurationTab)
         self.whiteTeamFolder.setObjectName("whiteTeamFolder")
         self.gridLayout_3.addWidget(self.whiteTeamFolder, 3, 1, 1, 1)
+
+        self.searchWTFbttn = QtWidgets.QPushButton(self.DirectoryConfigurationTab)
+        self.searchWTFbttn.setObjectName("searchWTFbttn")
+        self.gridLayout_3.addWidget(self.searchWTFbttn, 3, 2, 1, 1)
 
         #adds a label to use as a spacer to keep desired layout & properties
         self.spacer1 = QtWidgets.QLabel(self.DirectoryConfigurationTab)
@@ -179,6 +195,7 @@ class ConfigurationsWindow(object):
         self.vectorNameLabel.setObjectName("vectorNameLabel")
         self.gridLayout_4.addWidget(self.vectorNameLabel, 0, 0, 1, 1)
         self.vectorName = QtWidgets.QLineEdit(self.VectorConfigurationTab)
+        print(self.vectorName)
         self.vectorName.setObjectName("vectorName")
         self.gridLayout_4.addWidget(self.vectorName, 0, 1, 1, 1)
 
@@ -241,6 +258,10 @@ class ConfigurationsWindow(object):
         self.iconSource.setObjectName("iconSource")
         self.gridLayout_6.addWidget(self.iconSource, 2, 1, 1, 1)
 
+        self.searchIconBttn = QtWidgets.QPushButton(self.IconConfigurationTab)
+        self.searchIconBttn.setObjectName("searchIconBttn")
+        self.gridLayout_6.addWidget(self.searchIconBttn, 2, 3, 1, 1)
+
         #Add Icon Button
         self.addIconBttn = QtWidgets.QPushButton(self.IconConfigurationTab)
         self.addIconBttn.setObjectName("addIconBttn")
@@ -256,7 +277,7 @@ class ConfigurationsWindow(object):
         self.iconTable.headerItem().setTextAlignment(2, QtCore.Qt.AlignCenter)
         self.iconTable.header().setDefaultSectionSize(250)
         self.iconTable.header().setSortIndicatorShown(True)
-        self.gridLayout_6.addWidget(self.iconTable, 4, 0, 1, 2)
+        self.gridLayout_6.addWidget(self.iconTable, 4, 0, 1, 4)
 
         #creating space withing vector table to add data later
         for i in range(3):
@@ -266,7 +287,7 @@ class ConfigurationsWindow(object):
         #Delete Icon Button
         self.deleteIconBttn = QtWidgets.QPushButton(self.IconConfigurationTab)
         self.deleteIconBttn.setObjectName("deleteIconBttn")
-        self.gridLayout_6.addWidget(self.deleteIconBttn, 7, 1, 1, 1, QtCore.Qt.AlignRight)
+        self.gridLayout_6.addWidget(self.deleteIconBttn, 7, 3, 1, 1, QtCore.Qt.AlignRight)
         
 
 
@@ -303,6 +324,17 @@ class ConfigurationsWindow(object):
         self.blueTeamLabel.setText(insert("configurationsWindow", "Blue Team Folder:"))
         self.whiteTeamLabel.setText(insert("configurationsWindow", "White Team Folder:"))
         self.startDataIngestionBttn.setText(insert("configurationsWindow", "Start Data Ingestion"))
+
+        
+        self.searchDirectoryBttn.setIcon(QtGui.QIcon("folderBrowser.png"))
+        self.searchDirectoryBttn.clicked.connect(lambda: self.open_directory_dialog_box(self.rootDirectory))
+        self.searchRTFbttn.setIcon(QtGui.QIcon("folderBrowser.png"))
+        self.searchRTFbttn.clicked.connect(lambda: self.open_directory_dialog_box(self.redTeamFolder))
+        self.searchBTFbttn.setIcon(QtGui.QIcon("folderBrowser.png"))
+        self.searchBTFbttn.clicked.connect(lambda: self.open_directory_dialog_box(self.blueTeamFolder))
+        self.searchWTFbttn.setIcon(QtGui.QIcon("folderBrowser.png"))
+        self.searchWTFbttn.clicked.connect(lambda: self.open_directory_dialog_box(self.whiteTeamFolder))
+        
 #*--------------------------Vector Configuration Tab--------------------------------------------------*#
         self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.VectorConfigurationTab), insert("configurationsWindow", "Vector Configuration"))
         #Set labels, buttons & headers
@@ -329,6 +361,10 @@ class ConfigurationsWindow(object):
         self.deleteIconBttn.setText(insert("configurationsWindow", "Delete Icon"))
         self.addIconBttn.setText(insert("configurationsWindow", "Add Icon"))
         self.iconNameLabel.setText(insert("configurationsWindow", "Icon Name: "))
+
+        self.searchIconBttn.setIcon(QtGui.QIcon("folderBrowser.png"))
+        self.searchIconBttn.clicked.connect(lambda: self.open_file_dialog_box(self.iconSource))
+
         self.iconTable.setSortingEnabled(True)
         self.iconTable.headerItem().setText(0, insert("configurationsWindow", "Icon Name"))
         self.iconTable.headerItem().setText(1, insert("configurationsWindow", "Icon Source"))
@@ -342,6 +378,31 @@ class ConfigurationsWindow(object):
         self.iconSourceLabel.setText(insert("configurationsWindow", "Icon Source: "))
         self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.IconConfigurationTab), insert("configurationsWindow", "Icon Configuration"))
 
+       
+    def open_file_dialog_box(self, lineEdit):
+        filename = QtWidgets.QFileDialog.getOpenFileNames()
+        if len(filename[0])==0:
+            return
+        else:
+            path = filename[0][0]
+        
+        insert = QtCore.QCoreApplication.translate
+        lineEdit.setText(insert("configurationsWindow", path))   
+
+    def open_directory_dialog_box(self, lineEdit):
+        directoryName = QtWidgets.QFileDialog.getExistingDirectory()
+        print("directory ======" + str(directoryName))
+        if directoryName == "":
+            return
+        else:
+            path = directoryName
+        
+        insert = QtCore.QCoreApplication.translate
+        lineEdit.setText(insert("configurationsWindow", path))
+
+
+        
+    
 
 if __name__ == "__main__":
     import sys
