@@ -76,15 +76,17 @@ class ActionReportWindow(object):
         self.verticalLayout_2.addWidget(self.errorDescription)
         self.verticalLayout.addWidget(self.selectedLogFile)
 
+        # creating an expand button at the bottom of the 2 tables
+        self.validateButton = QtWidgets.QPushButton(self.windowBackground)
+        self.validateButton.setObjectName("validateButton")
+        self.verticalLayout.addWidget(self.validateButton)
+
         # creating an override button at the bottom of the 2 tables
         self.cancelButton = QtWidgets.QPushButton(self.windowBackground)
         self.cancelButton.setObjectName("cancelButton")
         self.verticalLayout.addWidget(self.cancelButton)
         
-        # creating an expand button at the bottom of the 2 tables
-        self.validateButton = QtWidgets.QPushButton(self.windowBackground)
-        self.validateButton.setObjectName("validateButton")
-        self.verticalLayout.addWidget(self.validateButton)
+
 
         actionReportWindow.setCentralWidget(self.windowBackground)
         # this is creating the menu bar options
