@@ -195,7 +195,6 @@ class ConfigurationsWindow(object):
         self.vectorNameLabel.setObjectName("vectorNameLabel")
         self.gridLayout_4.addWidget(self.vectorNameLabel, 0, 0, 1, 1)
         self.vectorName = QtWidgets.QLineEdit(self.VectorConfigurationTab)
-        print(self.vectorName)
         self.vectorName.setObjectName("vectorName")
         self.gridLayout_4.addWidget(self.vectorName, 0, 1, 1, 1)
 
@@ -216,6 +215,8 @@ class ConfigurationsWindow(object):
         self.vectorTable = QtWidgets.QTreeWidget(self.VectorConfigurationTab)
         self.vectorTable.setAlternatingRowColors(True)
         self.vectorTable.setAllColumnsShowFocus(False)
+        self.vectorTable.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
+        self.vectorTable.setIndentation(-1)
         self.vectorTable.setObjectName("vectorTable")
         self.vectorTable.headerItem().setTextAlignment(0, QtCore.Qt.AlignCenter)
         self.vectorTable.headerItem().setTextAlignment(1, QtCore.Qt.AlignCenter)
@@ -224,7 +225,7 @@ class ConfigurationsWindow(object):
         self.gridLayout_4.addWidget(self.vectorTable, 4, 0, 1, 2)
 
         #creating space withing vector table to add data later
-        for i in range(3):
+        for i in range(1):
             QtWidgets.QTreeWidgetItem(self.vectorTable)
 
         #Delete vector button
@@ -271,16 +272,17 @@ class ConfigurationsWindow(object):
         self.iconTable = QtWidgets.QTreeWidget(self.IconConfigurationTab)
         self.iconTable.setAlternatingRowColors(True)
         self.iconTable.setAllColumnsShowFocus(False)
+        self.iconTable.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
+        self.iconTable.setIndentation(-1)
         self.iconTable.setObjectName("iconTable")
         self.iconTable.headerItem().setTextAlignment(0, QtCore.Qt.AlignCenter)
         self.iconTable.headerItem().setTextAlignment(1, QtCore.Qt.AlignCenter)
-        self.iconTable.headerItem().setTextAlignment(2, QtCore.Qt.AlignCenter)
-        self.iconTable.header().setDefaultSectionSize(250)
+        self.iconTable.header().setDefaultSectionSize(200)
         self.iconTable.header().setSortIndicatorShown(True)
         self.gridLayout_6.addWidget(self.iconTable, 4, 0, 1, 4)
 
         #creating space withing vector table to add data later
-        for i in range(3):
+        for i in range(1):
             QtWidgets.QTreeWidgetItem(self.iconTable)
 
 
@@ -340,8 +342,15 @@ class ConfigurationsWindow(object):
         #Set labels, buttons & headers
         self.vectorNameLabel.setText(insert("configurationsWindow", "Vector Name:"))
         self.vectorDescLabel.setText(insert("configurationsWindow", "Vector Description:"))
+
         self.addVectorBttn.setText(insert("configurationsWindow", "Add Vector"))
+        self.addVectorBttn.clicked.connect(lambda: self.addTreeData(self.vectorTable, self.vectorName.text(), self.vectorDesc.toPlainText()))
+        self.addVectorBttn.clicked.connect(lambda: self.clearData(self.iconTable, self.vectorName, self.vectorDesc))
+
         self.deleteVectorBttn.setText(insert("configurationsWindow", "Delete Vector"))
+        self.deleteVectorBttn.clicked.connect(lambda: self.removeTreeData(self.vectorTable))
+
+
         self.vectorTable.setSortingEnabled(True)
         self.vectorTable.headerItem().setText(0, insert("configurationsWindow", "Vector Name"))
         self.vectorTable.headerItem().setText(1, insert("configurationsWindow", "Vector Description"))
@@ -349,37 +358,36 @@ class ConfigurationsWindow(object):
         self.vectorTable.setSortingEnabled(False)
 
         #set vector table data
-        self.vectorTable.topLevelItem(0).setText(0, insert("configurationsWindow", "Vector C"))
+        self.vectorTable.topLevelItem(0).setText(0, insert("configurationsWindow", "Vector A"))
         self.vectorTable.topLevelItem(0).setText(1, insert("configurationsWindow", "Testing Vector A"))
-        self.vectorTable.topLevelItem(1).setText(0, insert("configurationsWindow", "Vector B"))
-        self.vectorTable.topLevelItem(1).setText(1, insert("configurationsWindow", "Testing Vector B"))
-        self.vectorTable.topLevelItem(2).setText(0, insert("configurationsWindow", "Vector A"))
-        self.vectorTable.topLevelItem(2).setText(1, insert("configurationsWindow", "Testing Vector C"))
         self.vectorTable.setSortingEnabled(__sortingEnabled)
 
 #*--------------------------Icon Configuration Tab--------------------------------------------------*#
         self.deleteIconBttn.setText(insert("configurationsWindow", "Delete Icon"))
+        self.deleteIconBttn.clicked.connect(lambda: self.removeTreeData(self.iconTable))
+        
         self.addIconBttn.setText(insert("configurationsWindow", "Add Icon"))
+        self.addIconBttn.clicked.connect(lambda: self.addTreeData(self.iconTable, self.iconName.text(), self.iconSource.text()))
+        self.addIconBttn.clicked.connect(lambda: self.clearData(self.iconTable, self.iconName, self.iconSource))
+        
         self.iconNameLabel.setText(insert("configurationsWindow", "Icon Name: "))
 
-        
         self.searchIconBttn.setIcon(QtGui.QIcon("ui/windows/directoryPicker.png"))
         self.searchIconBttn.clicked.connect(lambda: self.open_file_dialog_box(self.iconSource))
 
         self.iconTable.setSortingEnabled(True)
         self.iconTable.headerItem().setText(0, insert("configurationsWindow", "Icon Name"))
         self.iconTable.headerItem().setText(1, insert("configurationsWindow", "Icon Source"))
-        self.iconTable.headerItem().setText(2, insert("configurationsWindow", "Image Preview"))
         __sortingEnabled = self.iconTable.isSortingEnabled()
         self.iconTable.setSortingEnabled(False)
-        self.iconTable.topLevelItem(0).setText(0, insert("configurationsWindow", "Icon 3"))
-        self.iconTable.topLevelItem(1).setText(0, insert("configurationsWindow", "Icon 2"))
-        self.iconTable.topLevelItem(2).setText(0, insert("configurationsWindow", "Icon 1"))
+        self.iconTable.topLevelItem(0).setText(0, insert("configurationsWindow", "Icon 1"))
+        self.iconTable.topLevelItem(0).setText(1, insert("configurationsWindow", "pick-tool-team11-binarybeasts/src/ui/windows/pick.png"))
         self.iconTable.setSortingEnabled(__sortingEnabled)
         self.iconSourceLabel.setText(insert("configurationsWindow", "Icon Source: "))
         self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.IconConfigurationTab), insert("configurationsWindow", "Icon Configuration"))
 
-       
+        
+    #opens file browser
     def open_file_dialog_box(self, lineEdit):
         filename = QtWidgets.QFileDialog.getOpenFileNames()
         if len(filename[0])==0:
@@ -390,6 +398,7 @@ class ConfigurationsWindow(object):
         insert = QtCore.QCoreApplication.translate
         lineEdit.setText(insert("configurationsWindow", path))   
 
+    #opens directory browser
     def open_directory_dialog_box(self, lineEdit):
         directoryName = QtWidgets.QFileDialog.getExistingDirectory()
         if directoryName == "":
@@ -400,9 +409,23 @@ class ConfigurationsWindow(object):
         insert = QtCore.QCoreApplication.translate
         lineEdit.setText(insert("configurationsWindow", path))
 
+    #adds data to given tree widget with two columns
+    def addTreeData(self, tree, col1, col2):
+        data = QtWidgets.QTreeWidgetItem([col1, col2])
+        data.setFlags(data.flags() | QtCore.Qt.ItemIsEditable)
+        tree.addTopLevelItem(data)
 
-        
+    #clears data from line/text edits after adding to tree widget
+    def clearData(self, tree, col1, col2):
+            col1.clear()
+            col2.clear()
     
+    #removes selected items from given tree widget
+    def removeTreeData(self, tree):
+        selectedItems = tree.selectedItems()
+        for item in selectedItems:
+                tree.takeTopLevelItem(tree.indexOfTopLevelItem(item))
+
 
 if __name__ == "__main__":
     import sys
