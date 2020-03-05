@@ -77,12 +77,15 @@ class FilterUi(object):
         self.applyFilterButton.setObjectName("applyFilterButton")
         self.filterFormLayout.setWidget(9, QtWidgets.QFormLayout.FieldRole, self.applyFilterButton)
         self.horizontalLayout_3.addLayout(self.filterFormLayout)
+
         self.filterView = QtWidgets.QTreeWidget(self.filterConfigurationLayout)
         self.filterView.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.filterView.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.filterView.setAlternatingRowColors(True)
         self.filterView.setHeaderHidden(False)
         self.filterView.setObjectName("searchResultsView")
+        self.filterView.setSortingEnabled(True)
+        self.filterView.header().setSortIndicatorShown(True)
 
         # Add empty spaces to Search Results view to enter sample data
         for i in range(5):
@@ -154,6 +157,7 @@ class FilterUi(object):
         self.applyFilterButton.setText(insert("SearchFilterWindow", "Apply Filter"))
 
         # Add labels to filter view
+        self.filterView.setSortingEnabled(True)
         self.filterView.headerItem().setText(0, insert("SearchFilterWindow", "Log ID"))
         self.filterView.headerItem().setText(1, insert("SearchFilterWindow", "Time of Occurance"))
         self.filterView.headerItem().setText(2, insert("SearchFilterWindow", "Description"))
@@ -212,6 +216,7 @@ class FilterUi(object):
         self.vectorSelectConfirmButton.setText(insert("SearchFilterWindow", "Select Vector"))
 
         # Add labels to vector view
+        self.vectorView.setSortingEnabled(True)
         self.vectorView.headerItem().setText(0, insert("SearchFilterWindow", "Log ID"))
         self.vectorView.headerItem().setText(1, insert("SearchFilterWindow", "Time of Occurance"))
         self.vectorView.headerItem().setText(2, insert("SearchFilterWindow", "Description"))
