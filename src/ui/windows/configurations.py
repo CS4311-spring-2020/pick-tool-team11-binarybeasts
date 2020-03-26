@@ -1,5 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from ui.common import menu_bar
+from config.configurations import Configuration
 
 
 class ConfigurationsWindow(object):
@@ -300,6 +301,8 @@ class ConfigurationsWindow(object):
         QtCore.QMetaObject.connectSlotsByName(configurationsWindow)
 
     def addData(self, configurationsWindow):
+        configuration = Configuration()
+
         insert = QtCore.QCoreApplication.translate
         configurationsWindow.setWindowTitle(insert("configurationsWindow", "Configurations"))
 #*-------------------------Team Configuration Tab-------------------------------------------------*#
@@ -336,6 +339,8 @@ class ConfigurationsWindow(object):
         self.searchBTFbttn.clicked.connect(lambda: self.open_directory_dialog_box(self.blueTeamFolder))
         self.searchWTFbttn.setIcon(QtGui.QIcon("ui/windows/directoryPicker.png"))
         self.searchWTFbttn.clicked.connect(lambda: self.open_directory_dialog_box(self.whiteTeamFolder))
+
+        self.startDataIngestionBttn.clicked.connect(lambda: configuration.set_directories(self.rootDirectory.text(), self.redTeamFolder.text(), self.blueTeamFolder.text(), self.whiteTeamFolder.text()))
         
 #*--------------------------Vector Configuration Tab--------------------------------------------------*#
         self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.VectorConfigurationTab), insert("configurationsWindow", "Vector Configuration"))
