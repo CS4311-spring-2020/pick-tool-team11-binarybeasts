@@ -1,5 +1,8 @@
-from config import vector, icon
+from config.vector import Vector
+from config.icon import Icon
+from ingestion.splunk import Splunk
 import os
+from threading import Thread
 
 
 class Configuration:
@@ -56,6 +59,9 @@ class Configuration:
         self.white_files = self.get_filepaths_from_directory(white_dir)
         print(self.white_files)
 
+        splunk = Splunk(self.root_files, self.red_files, self.blue_files, self.white_files)
+        Thread(target=splunk.start_ingestion()).start()
+
     def get_filepaths_from_directory(self, dir):
         file_paths = []
         if len(dir) == 0:
@@ -66,11 +72,10 @@ class Configuration:
                 file_paths.append(full_path)
         return file_paths
 
-
     def add_vector(self, name, description):
-        new_vector = vector.Vector(name, description)
+        new_vector = Vector(name, description)
         self.vectors.append(new_vector)
 
     def add_icon(self, name, source):
-        new_icon = icon.Icon(name, source)
+        new_icon = Icon(name, source)
         self.vectors.append(new_icon)
