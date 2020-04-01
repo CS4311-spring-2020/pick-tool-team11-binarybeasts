@@ -1,94 +1,118 @@
 import sys
 from ui.windows import search_filter, configurations, action_report, graph
-from PyQt5 import QtWidgets, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        MainWindow.resize(400, 340)
+        MainWindow.setAutoFillBackground(True)
 
-class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self):
-        super().__init__()
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.gridLayout_5 = QtWidgets.QGridLayout(self.centralwidget)
+        self.gridLayout_5.setObjectName("gridLayout_5")
 
-        self.title = "PICK Tool"
-        self.top = 600
-        self.left = 300
-        self.width = 680
-        self.height = 580
+        # pick icon
+        self.gridLayout_2 = QtWidgets.QGridLayout()
+        self.img2 = QtWidgets.QLabel(self.centralwidget)
+        self.img2.setPixmap(QtGui.QPixmap("pick.png"))
+        self.gridLayout_2.addWidget(self.img2, 0, 0, 1, 1)
+        self.gridLayout_5.addLayout(self.gridLayout_2, 0, 3, 3, 2)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout_5.addItem(spacerItem, 0, 5, 1, 1)
+        self.formLayout = QtWidgets.QFormLayout()
+        self.img1 = QtWidgets.QLabel(self.centralwidget)
+        self.img1.setPixmap(QtGui.QPixmap("pick.png"))
 
-        # Button Changes window to the Event Configuration window
-        self.eventConfigButton = QtWidgets.QPushButton("Event Configuration", self)
-        self.eventConfigButton.move(360, 150)
-        self.eventConfigButton.resize(250, 40)
-        self.eventConfigButton.setToolTip("<h5></h5>")
+        # Layout of main window
+        self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.img1)
+        self.gridLayout_5.addLayout(self.formLayout, 0, 1, 3, 1)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 146, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_5.addItem(spacerItem1, 3, 3, 2, 1)
+        spacerItem2 = QtWidgets.QSpacerItem(20, 146, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_5.addItem(spacerItem2, 3, 1, 2, 1)
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout_5.addItem(spacerItem3, 0, 0, 1, 1)
+        spacerItem4 = QtWidgets.QSpacerItem(20, 142, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_5.addItem(spacerItem4, 4, 2, 1, 1)
+        self.gridLayout_3 = QtWidgets.QGridLayout()
+        self.gridLayout_3.setObjectName("gridLayout_3")
+        self.app_name = QtWidgets.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(14)
+        font.setBold(True)
+        font.setWeight(75)
+        self.app_name.setFont(font)
+        self.app_name.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.eventConfigButton.clicked.connect(self.eventConfigButtonClicked)
+        # Manage Graph Button
+        self.gridLayout_3.addWidget(self.app_name, 0, 0, 1, 1)
+        self.manageGraphButton = QtWidgets.QPushButton(self.centralwidget)
+        self.manageGraphButton.clicked.connect(self.manageGraphButtonClicked)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHeightForWidth(self.manageGraphButton.sizePolicy().hasHeightForWidth())
+        self.manageGraphButton.setSizePolicy(sizePolicy)
 
-        # Button 2 Changes window to the Enforcement Action Report window
-        self.actionReportButton = QtWidgets.QPushButton("Enforcement Action Report", self)
-        self.actionReportButton.move(80, 150)
-        self.actionReportButton.resize(250, 40)
-        self.actionReportButton.setToolTip("<h5></h5>")
-
-        self.actionReportButton.clicked.connect(self.actionReportButtonClicked)
-
-        # Button 3 Changes window to the Search/Filter window
-        self.searchFilterButton = QtWidgets.QPushButton("Search/Filter", self)
-        self.searchFilterButton.move(360, 200)
-        self.searchFilterButton.resize(250, 40)
-        self.searchFilterButton.setToolTip("<h5></h5>")
-
+        # Search/Filter Button
+        self.gridLayout_3.addWidget(self.manageGraphButton, 4, 0, 1, 1)
+        self.searchFilterButton = QtWidgets.QPushButton(self.centralwidget)
         self.searchFilterButton.clicked.connect(self.searchFilterButtonClicked)
 
-        # Button 4 Changes window to the Manage Graph
-        self.manageGraphButton = QtWidgets.QPushButton("Manage Graph", self)
-        self.manageGraphButton.move(80, 200)
-        self.manageGraphButton.resize(250, 40)
-        self.manageGraphButton.setToolTip("<h5></h5>")
+        # Enforcement Action Report Button
+        self.gridLayout_3.addWidget(self.searchFilterButton, 3, 0, 1, 1)
+        self.actionReportButton = QtWidgets.QPushButton(self.centralwidget)
+        self.actionReportButton.clicked.connect(self.actionReportButtonClicked)
 
-        self.manageGraphButton.clicked.connect(self.manageGraphButtonClicked)
+        # Event Configuration Button
+        self.gridLayout_3.addWidget(self.actionReportButton, 2, 0, 1, 1)
+        self.eventConfigButton = QtWidgets.QPushButton(self.centralwidget)
+        self.eventConfigButton.clicked.connect(self.eventConfigButtonClicked)
+        self.gridLayout_3.addWidget(self.eventConfigButton, 1, 0, 1, 1)
+        self.gridLayout_5.addLayout(self.gridLayout_3, 0, 2, 4, 1)
+        MainWindow.setCentralWidget(self.centralwidget)
 
-        self.main_window()
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def main_window(self):
-
-        self.label = QtWidgets.QLabel("<h3>PICK Tool</h3>", self)
-        self.label.move(300, 80)
-        self.label = QtWidgets.QLabel(self)
-
-        pixmap = QtGui.QPixmap("ui/windows/pick.png")
-        lbl = QtWidgets.QLabel(self)
-        lbl.setPixmap(pixmap)
-        lbl.move(400, 10)
-        lbl.resize(128, 128)
-
-        pixmap = QtGui.QPixmap("ui/windows/pick.png")
-        lbl = QtWidgets.QLabel(self)
-        lbl.setPixmap(pixmap)
-        lbl.move(170, 10)
-        lbl.resize(128, 128)
-        self.setWindowTitle(self.title)
-        self.setGeometry(self.top, self.left, self.width, self.height)
-        self.show()
-
+# Opens Search/Filter Window
     def searchFilterButtonClicked(self):
         self.filterWindow = QtWidgets.QMainWindow()
         search_filter.FilterUi().setupUi(self.filterWindow)
         self.filterWindow.show()
 
+# Opens Manage Graph Window
     def manageGraphButtonClicked(self):
         self.graphWindow = QtWidgets.QMainWindow()
         graph.GraphWindow().setupUi(self.graphWindow)
         self.graphWindow.show()
 
+# Opens Event Configuration Window
     def eventConfigButtonClicked(self):
         self.eventConfigWindow = QtWidgets.QMainWindow()
         configurations.ConfigurationsWindow().generateUi(self.eventConfigWindow)
         self.eventConfigWindow.show()
 
+# Opens Enforcement Action Report Window
     def actionReportButtonClicked(self):
         self.actionReportWindow = QtWidgets.QMainWindow()
         action_report.ActionReportWindow().generateUi(self.actionReportWindow)
         self.actionReportWindow.show()
 
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.app_name.setText(_translate("MainWindow", "PICK Tool"))
+        self.manageGraphButton.setText(_translate("MainWindow", "Manage Graph"))
+        self.searchFilterButton.setText(_translate("MainWindow", "Search/Filter"))
+        self.actionReportButton.setText(_translate("MainWindow", "Enforcement Action Report"))
+        self.eventConfigButton.setText(_translate("MainWindow", "Event Configuration"))
+
+
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    ex = MainWindow()
-    sys.exit(app.exec())
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())
