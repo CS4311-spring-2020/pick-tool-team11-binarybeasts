@@ -301,7 +301,7 @@ class ConfigurationsWindow(object):
         QtCore.QMetaObject.connectSlotsByName(configurationsWindow)
 
     def addData(self, configurationsWindow):
-        configuration = Configuration()
+        configuration = Configuration.get_instance()
 
         insert = QtCore.QCoreApplication.translate
         configurationsWindow.setWindowTitle(insert("configurationsWindow", "Configurations"))

@@ -1,5 +1,5 @@
 import sys
-from ui.windows import search_filter, configurations, action_report, graph
+from ui.windows import search_filter, configurations_window, action_report, graph
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(object):
@@ -90,7 +90,7 @@ class Ui_MainWindow(object):
 # Opens Event Configuration Window
     def eventConfigButtonClicked(self):
         self.eventConfigWindow = QtWidgets.QMainWindow()
-        configurations.ConfigurationsWindow().generateUi(self.eventConfigWindow)
+        configurations_window.ConfigurationsWindow().generateUi(self.eventConfigWindow)
         self.eventConfigWindow.show()
 
 # Opens Enforcement Action Report Window

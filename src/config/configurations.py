@@ -7,6 +7,14 @@ from threading import Thread
 
 class Configuration:
 
+    __instance = None
+
+    @staticmethod
+    def get_instance():
+        if Configuration.__instance == None:
+            return Configuration()
+        return Configuration.__instance
+
     def __init__(self):
         self.is_lead = False
         self.lead_IP = "0.0.0.0"
@@ -25,6 +33,10 @@ class Configuration:
         self.vectors = []
 
         self.icons = []
+
+        self.splunk = None
+
+        Configuration.__instance = self
 
     def set_team(self, is_lead, lead_IP, established_connections):
         self.is_lead = is_lead
@@ -59,8 +71,9 @@ class Configuration:
         self.white_files = self.get_filepaths_from_directory(white_dir)
         print(self.white_files)
 
-        splunk = Splunk(self.root_files, self.red_files, self.blue_files, self.white_files)
-        Thread(target=splunk.start_ingestion()).start()
+        self.splunk = Splunk(self.root_files, self.red_files, self.blue_files, self.white_files)
+        self.splunk.connect()
+        Thread(target=self.splunk.start_ingestion()).start()
 
     def get_filepaths_from_directory(self, dir):
         file_paths = []

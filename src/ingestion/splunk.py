@@ -11,7 +11,7 @@ class Splunk:
         self.blue_files = blue_files
         self.white_files = white_files
 
-    def start_ingestion(self):
+    def connect(self):
         print("Starting Splunk Ingestion..")
 
         HOST = "localhost"
@@ -31,12 +31,9 @@ class Splunk:
             password=PASSWORD)
         # Retrieve the index for the data
         self.index = self.service.indexes["test_splunk"]
+        return self
 
-        # Create a variable with the path and filename
-        # ingest = "/Applications/Splunk/README-splunk.txt"
-        # ingest = r"C:\Users\ponyo\OneDrive\Desktop\hi.txt"
-
-
+    def start_ingestion(self):
         # trying to automatically ingest this
         # ingest = self.rootDirectory.text()
         #
@@ -50,6 +47,8 @@ class Splunk:
         self.ingest_files(self.blue_files)
         self.ingest_files(self.white_files)
         print("FINISHED INGESTION")
+
+        return self
 
     def ingest_files(self, directory_files):
         for filepath in directory_files:
