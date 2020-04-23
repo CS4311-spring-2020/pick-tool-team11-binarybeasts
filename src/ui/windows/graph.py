@@ -501,13 +501,11 @@ class GraphWindow(object):
         self.tableWidgetRelationships.setSizePolicy(sizePolicy)
         self.tableWidgetRelationships.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.tableWidgetRelationships.setAlternatingRowColors(True)
-        self.tableWidgetRelationships.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
-        self.tableWidgetRelationships.setTextElideMode(QtCore.Qt.ElideNone)
         self.tableWidgetRelationships.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
         self.tableWidgetRelationships.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
         self.tableWidgetRelationships.setShowGrid(False)
-        self.tableWidgetRelationships.setCornerButtonEnabled(False)
         self.tableWidgetRelationships.setObjectName("tableWidgetRelationships")
+        self.tableWidgetRelationships.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
 
         # a relationship is the length of a single relationship
         relationship = 4
@@ -553,8 +551,9 @@ class GraphWindow(object):
         self.pushButtonDeleteRelationship.setObjectName("pushButtonDeleteRelationship")
         self.verticalLayout.addWidget(self.pushButtonDeleteRelationship)
 
-        self.mdiArea.addSubWindow(self.subwindow_Table)
+        
         self.mdiArea.addSubWindow(self.subwindow_Relationship)
+        self.mdiArea.addSubWindow(self.subwindow_Table)
         self.gridLayout.addWidget(self.mdiArea, 1, 0, 1, 1)
         self.mdiArea.addSubWindow(self.subwindow_Graph)
 
@@ -618,8 +617,6 @@ class GraphWindow(object):
         self.retranslateUi(graphWindow)
         self.actionTile.triggered.connect(self.mdiArea.tileSubWindows)
         self.actionCascade.triggered.connect(self.mdiArea.cascadeSubWindows)
-        #self.actionGraphical_View.triggered.connect(self.mdiArea.setActiveSubWindow.subwindow_Graph)
-        self.pushButtonDeleteRelationship.pressed.connect(self.tableWidgetRelationships.clearContents)
         QtCore.QMetaObject.connectSlotsByName(graphWindow)
 
     def retranslateUi(self, graphWindow):
@@ -729,7 +726,14 @@ class GraphWindow(object):
 
         #add relationship labels
         self.subwindow_Relationship.setWindowTitle(insert("graphWindow", "Relationship Table"))
+
         self.pushButtonAddRelationship.setText(insert("graphWindow", "Add Relationship"))
+        self.pushButtonAddRelationship.clicked.connect(lambda: self.addTableData(self.tableWidgetRelationships, self.lineEditRelationship.text(), self.lineEditParent.text(), self.lineEditChild.text()))
+        self.pushButtonAddRelationship.clicked.connect(lambda: self.clearData(self.tableWidgetRelationships, self.lineEditRelationship, self.lineEditParent, self.lineEditChild))
+
+        self.pushButtonDeleteRelationship.setText(insert("graphWindow", "Delete Relationship"))
+        self.pushButtonDeleteRelationship.clicked.connect(lambda: self.removeTableData(self.tableWidgetRelationships))
+
         self.labelRelationship.setText(insert("graphWindow", "Relationship Label:"))
         self.labelParent.setText(insert("graphWindow", "Parent Node:"))
         self.labelChild.setText(insert("graphWindow", "Child Node:"))
@@ -789,8 +793,34 @@ class GraphWindow(object):
         item = self.tableWidgetRelationships.item(3, 3)
         item.setText(insert("graphWindow", "00-00008"))
         self.tableWidgetRelationships.setSortingEnabled(__sortingEnabled)
-        self.pushButtonDeleteRelationship.setText(insert("graphWindow", "Delete Relationship"))
 
+        
+
+    #adds data to given tree widget with two columns
+    def addTableData(self, table, col1, col2, col3):
+        
+        table.insertRow(0)
+
+        item = QtWidgets.QTableWidgetItem()
+        item.setCheckState(QtCore.Qt.Unchecked)
+        item.setFlags(QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+        table.setItem(0, 0, item)
+        
+        table.setItem(0, 1, QtWidgets.QTableWidgetItem(col1))
+        table.setItem(0, 2, QtWidgets.QTableWidgetItem(col2))
+        table.setItem(0, 3, QtWidgets.QTableWidgetItem(col3))
+
+    #clears data from line/text edits after adding to tree widget
+    def clearData(self, table, col1, col2, col3):
+            col1.clear()
+            col2.clear()
+            col3.clear()
+    
+    #removes selected items from given tree widget
+    def removeTableData(self, table):
+        selectedItems = table.selectionModel().selectedRows() 
+        for item in sorted(selectedItems):
+                table.removeRow(item.row())
 
 if __name__ == "__main__":
     import sys
