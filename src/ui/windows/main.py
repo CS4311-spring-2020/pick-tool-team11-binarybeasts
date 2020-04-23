@@ -13,16 +13,17 @@ class Ui_MainWindow(object):
         self.gridLayout_5.setObjectName("gridLayout_5")
 
         # pick icon
+        dir = "ui/windows/"
         self.gridLayout_2 = QtWidgets.QGridLayout()
         self.img2 = QtWidgets.QLabel(self.centralwidget)
-        self.img2.setPixmap(QtGui.QPixmap("pick.png"))
+        self.img2.setPixmap(QtGui.QPixmap(dir+"pick.png"))
         self.gridLayout_2.addWidget(self.img2, 0, 0, 1, 1)
         self.gridLayout_5.addLayout(self.gridLayout_2, 0, 3, 3, 2)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout_5.addItem(spacerItem, 0, 5, 1, 1)
         self.formLayout = QtWidgets.QFormLayout()
         self.img1 = QtWidgets.QLabel(self.centralwidget)
-        self.img1.setPixmap(QtGui.QPixmap("pick.png"))
+        self.img1.setPixmap(QtGui.QPixmap(dir+"pick.png"))
 
         # Layout of main window
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.img1)
