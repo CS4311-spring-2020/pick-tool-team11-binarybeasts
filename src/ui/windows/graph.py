@@ -1,13 +1,13 @@
 from ui.windows import search_filter, configurations_window, action_report, graph
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from PyQt5.QtWidgets import QFileDialog, QDialog, QApplication, QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QFormLayout, QComboBox, QPushButton, QInputDialog, QLineEdit, QLabel
+from PyQt5.QtWidgets import QFileDialog, QDialog, QApplication, QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QFormLayout, QComboBox, QDateTimeEdit, QPushButton, QInputDialog, QLineEdit, QTextEdit, QLabel
 import sys
 import os
 sys.path.insert(1,os.path.dirname(__file__)+"/..")
 
 from QGraphViz.QGraphViz import QGraphViz, QGraphVizManipulationMode
-from QGraphViz.DotParser import Graph, GraphType
+from QGraphViz.DotParser import Graph, GraphType, Node, Edge
 from QGraphViz.Engines import Dot
 
 
@@ -221,6 +221,11 @@ class GraphWindow(object):
             addNodeDialog.ok=False
             addNodeDialog.node_name=""
             addNodeDialog.node_label=""
+            addNodeDialog.node_timestamp=""
+            addNodeDialog.node_description=""
+            addNodeDialog.node_logEntryReference=""
+            addNodeDialog.node_logCreator=""
+            addNodeDialog.node_logEntrySource=""
             addNodeDialog.node_type="None"
 
             # Layouts
@@ -235,6 +240,13 @@ class GraphWindow(object):
             #line edits
             leNodeName = QLineEdit()
             leNodeLabel = QLineEdit()
+            teNodeDescription = QTextEdit()
+            dtNodeTimestamp = QDateTimeEdit()
+            dtNodeTimestamp.setDate(QtCore.QDate(2020, 1, 1))
+            dtNodeTimestamp.setCalendarPopup(True)
+            leLogEntryReference = QLineEdit()
+            cbxLogCreator = QComboBox()
+            leLogEntrySource = QLineEdit()
             cbxNodeType = QComboBox()
             leImagePath = QLineEdit()
 
@@ -243,25 +255,41 @@ class GraphWindow(object):
             pbCancel = QPushButton()
 
             cbxNodeType.addItems(["None","circle","box"])
+            cbxLogCreator.addItems(["None","Red","Blue", "White"])
             pbOK.setText("&OK")
             pbCancel.setText("&Cancel")
 
+
+
             addNodeLayout.setWidget(0, QFormLayout.LabelRole, QLabel("Node Name"))
             addNodeLayout.setWidget(0, QFormLayout.FieldRole, leNodeName)
-            addNodeLayout.setWidget(1, QFormLayout.LabelRole, QLabel("Node Label"))
-            addNodeLayout.setWidget(1, QFormLayout.FieldRole, leNodeLabel)
-            addNodeLayout.setWidget(2, QFormLayout.LabelRole, QLabel("Node Type"))
-            addNodeLayout.setWidget(2, QFormLayout.FieldRole, cbxNodeType)
-            addNodeLayout.setWidget(3, QFormLayout.LabelRole, QLabel("Node Image"))
-            addNodeLayout.setWidget(3, QFormLayout.FieldRole, leImagePath)
+            addNodeLayout.setWidget(1, QFormLayout.LabelRole, QLabel("Node Description"))
+            addNodeLayout.setWidget(1, QFormLayout.FieldRole, teNodeDescription)
+            addNodeLayout.setWidget(2, QFormLayout.LabelRole, QLabel("Node Timestamp"))
+            addNodeLayout.setWidget(2, QFormLayout.FieldRole, dtNodeTimestamp)
+            addNodeLayout.setWidget(3, QFormLayout.LabelRole, QLabel("Log Entry Reference"))
+            addNodeLayout.setWidget(3, QFormLayout.FieldRole, leLogEntryReference)
+            addNodeLayout.setWidget(4, QFormLayout.LabelRole, QLabel("Log Creator"))
+            addNodeLayout.setWidget(4, QFormLayout.FieldRole, cbxLogCreator)
+            addNodeLayout.setWidget(5, QFormLayout.LabelRole, QLabel("Log Entry Source"))
+            addNodeLayout.setWidget(5, QFormLayout.FieldRole, leLogEntrySource)
+            addNodeLayout.setWidget(6, QFormLayout.LabelRole, QLabel("Node Type"))
+            addNodeLayout.setWidget(6, QFormLayout.FieldRole, cbxNodeType)
+            addNodeLayout.setWidget(7, QFormLayout.LabelRole, QLabel("Node Image"))
+            addNodeLayout.setWidget(7, QFormLayout.FieldRole, leImagePath)
 
             #ok button handler
             def ok():
                 addNodeDialog.OK=True
                 addNodeDialog.node_name = leNodeName.text()
-                addNodeDialog.node_label = leNodeLabel.text()
+                addNodeDialog.node_label = leNodeName.text()
+                addNodeDialog.node_timestamp= dtNodeTimestamp.text()
+                addNodeDialog.node_description= teNodeDescription.toPlainText()
+                addNodeDialog.node_logEntryReference = leLogEntryReference.text()
+                addNodeDialog.node_logCreator= cbxLogCreator.currentText()
+                addNodeDialog.node_logEntrySource= leLogEntrySource.text()
                 if(leImagePath.text()): 
-                    addNodeDialog.node_type = "ui/windows/" + leImagePath.text() 
+                    addNodeDialog.node_type = "ui/windows/" + leImagePath.text() + ".png"
                 else: 
                     addNodeDialog.node_type = cbxNodeType.currentText()
                 addNodeDialog.close()
@@ -272,15 +300,16 @@ class GraphWindow(object):
                 addNodeDialog.close()
 
             pbOK.clicked.connect(ok)
+            pbOK.clicked.connect(lambda: self.addNewNode(self.tableWidgetNodes, self.nodes, leNodeName.text(), dtNodeTimestamp.text(), teNodeDescription.toPlainText(), leLogEntryReference.text(), cbxLogCreator.currentText(), addNodeDialog.node_type, leLogEntrySource.text()))
             pbCancel.clicked.connect(cancel)
 
             buttons_layout.addWidget(pbOK)
             buttons_layout.addWidget(pbCancel)
             addNodeDialog.exec_()
 
-            #node_name, okPressed = QInputDialog.getText(wi, "Node name","Node name:", QLineEdit.Normal, "")
+            
             if addNodeDialog.OK and addNodeDialog.node_name != '':
-                    qgv.addNode(qgv.engine.graph, addNodeDialog.node_name, label=addNodeDialog.node_label, shape=addNodeDialog.node_type)
+                    qgv.addNode(qgv.engine.graph, addNodeDialog.node_name, label=addNodeDialog.node_label, description=addNodeDialog.node_description , timestamp=addNodeDialog.node_timestamp, leReference= addNodeDialog.node_logEntryReference, creator=addNodeDialog.node_logCreator, leSource=addNodeDialog.node_logEntrySource, shape=addNodeDialog.node_type)
                     qgv.build()
 
         def rem_node():
@@ -291,7 +320,7 @@ class GraphWindow(object):
 
 
         def rem_edge():
-            qgv.manipulation_mode=QGraphVizManipulationMode.Edge_remove_Mode
+            qgv.manipulation_mode=QGraphVizManipulationMode.Edge_remove_Mode()
             for btn in buttons_list:
                 btn.setChecked(False)
             btnRemEdge.setChecked(True)
@@ -301,6 +330,7 @@ class GraphWindow(object):
             for btn in buttons_list:
                 btn.setChecked(False)
             btnAddEdge.setChecked(True)
+           
 
         # Add two horizontal layouts (pannels to hold buttons)
         hpanelTop=QHBoxLayout()
@@ -382,42 +412,31 @@ class GraphWindow(object):
         self.tableWidgetNodes.setShowGrid(False)
         self.tableWidgetNodes.setGridStyle(QtCore.Qt.SolidLine)
         self.tableWidgetNodes.setCornerButtonEnabled(False)
-        nodes = 3
-        node_properties = 9
+        self.nodes = 1
+        self.node_properties = 9
         self.tableWidgetNodes.setObjectName("tableWidgetNodes")
-        self.tableWidgetNodes.setColumnCount(node_properties)
-        self.tableWidgetNodes.setRowCount(nodes)
+        self.tableWidgetNodes.setColumnCount(self.node_properties)
+        self.tableWidgetNodes.setRowCount(self.nodes)
         #node table row header
-        for node in range(nodes):
+        #node table row header
+        for property in range(self.node_properties):
+            item = QtWidgets.QTableWidgetItem()
+            self.tableWidgetNodes.setHorizontalHeaderItem(property, item)
+        for node in range(self.nodes):
             item = QtWidgets.QTableWidgetItem()
             self.tableWidgetNodes.setVerticalHeaderItem(node, item)
 
+
         #node table column header
-        for property in range(node_properties):
+        for node in range(self.nodes):
             item = QtWidgets.QTableWidgetItem()
-            self.tableWidgetNodes.setHorizontalHeaderItem(property, item)
-
-        #creates the first column in the first row without a check box
-        item = QtWidgets.QTableWidgetItem()
-        item.setFlags(QtCore.Qt.ItemIsDragEnabled|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
-        self.tableWidgetNodes.setItem(0, 0, item)
-
-        #creates the rest of the columns in the first row with checkboxes
-        for property in range(node_properties):
-            item = QtWidgets.QTableWidgetItem()
-            item.setFlags(QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
-            item.setCheckState(QtCore.Qt.Checked)
-            self.tableWidgetNodes.setItem(0, property+1, item)
-
-        #creates temporary nodes
-        for node in range(nodes):
-            item = QtWidgets.QTableWidgetItem()
-            item.setFlags(QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
-            item.setCheckState(QtCore.Qt.Unchecked)
-            self.tableWidgetNodes.setItem(node + 1, 0, item)
-            for property in range(node_properties):
+            self.tableWidgetNodes.setItem(node, 0, item)
+            for property in range(self.node_properties):
                 item = QtWidgets.QTableWidgetItem()
-                self.tableWidgetNodes.setItem(node + 1, property + 1, item)
+                item.setFlags(QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+                item.setCheckState(QtCore.Qt.Checked)
+                self.tableWidgetNodes.setItem(node, property+1, item)
+    
 
         #table properties
         self.tableWidgetNodes.horizontalHeader().setCascadingSectionResizes(False)
@@ -510,19 +529,21 @@ class GraphWindow(object):
         # a relationship is the length of a single relationship
         relationship = 4
         # relationships is the length of a set of relationships
-        relationships = 4
+        relationships = 1
         # setting the relationship table dimensions
         self.tableWidgetRelationships.setColumnCount(relationship)
         self.tableWidgetRelationships.setRowCount(relationships)
         # creating the row header for relationships
-        for relation in range(relationships):
-            item = QtWidgets.QTableWidgetItem()
-            self.tableWidgetRelationships.setVerticalHeaderItem(relation, item)
+        for relation in range(relationship):
             item = QtWidgets.QTableWidgetItem()
             item.setTextAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignVCenter)
             self.tableWidgetRelationships.setHorizontalHeaderItem(relation, item)
-            
 
+        for relation in range(relationships):
+            item = QtWidgets.QTableWidgetItem()
+            self.tableWidgetRelationships.setVerticalHeaderItem(relation, item)
+
+        
         # creates the table
         for relation in range(relationships):
             # creates a checkbox in the column
@@ -692,30 +713,7 @@ class GraphWindow(object):
         self.tableWidgetNodes.setSortingEnabled(False)
 
         #items in table
-        item = self.tableWidgetNodes.item(1, 1)
-        item.setText(insert("graphWindow", "0-001"))
-        item = self.tableWidgetNodes.item(1, 2)
-        item.setText(insert("graphWindow", "Packet Sniffing"))
-        item = self.tableWidgetNodes.item(1, 3)
-        item.setText(insert("graphWindow", "09:32:45"))
-        item = self.tableWidgetNodes.item(1, 4)
-        item.setText(insert("graphWindow", "Blue team starts their reconnaissance by inte rcepting packets"))
-        item = self.tableWidgetNodes.item(1, 5)
-        item.setText(insert("graphWindow", "00-00003"))
-        item = self.tableWidgetNodes.item(1, 6)
-        item.setText(insert("graphWindow", "Blue"))
-        item = self.tableWidgetNodes.item(1, 7)
-        item.setText(insert("graphWindow", "Sword"))
-        item = self.tableWidgetNodes.item(1, 8)
-        item.setText(insert("graphWindow", "C:\\Users\\User\\PycharmProjects\\untitled"))
-        item = self.tableWidgetNodes.item(2, 1)
-        item.setText(insert("graphWindow", "0-002"))
-        item = self.tableWidgetNodes.item(2, 6)
-        item.setText(insert("graphWindow", "Red"))
-        item = self.tableWidgetNodes.item(2, 7)
-        item.setText(insert("graphWindow", "Shield"))
-        item = self.tableWidgetNodes.item(2, 8)
-        item.setText(insert("graphWindow", "C:\\Users\\User\\PycharmProjects\\untitled"))
+        
         
         self.tableWidgetNodes.setSortingEnabled(__sortingEnabled)
         self.subwindow_Graph.setWindowTitle(insert("graphWindow", "Graphical View"))
@@ -738,15 +736,6 @@ class GraphWindow(object):
         self.labelParent.setText(insert("graphWindow", "Parent Node:"))
         self.labelChild.setText(insert("graphWindow", "Child Node:"))
 
-        self.tableWidgetRelationships.setSortingEnabled(True)
-        item = self.tableWidgetRelationships.verticalHeaderItem(0)
-        item.setText(insert("graphWindow", "1"))
-        item = self.tableWidgetRelationships.verticalHeaderItem(1)
-        item.setText(insert("graphWindow", "2"))
-        item = self.tableWidgetRelationships.verticalHeaderItem(2)
-        item.setText(insert("graphWindow", "3"))
-        item = self.tableWidgetRelationships.verticalHeaderItem(3)
-        item.setText(insert("graphWindow", "4"))
         
         item = self.tableWidgetRelationships.horizontalHeaderItem(0)
         item.setText(insert("graphWindow", "Relationship ID"))
@@ -768,36 +757,12 @@ class GraphWindow(object):
         item.setText(insert("graphWindow", "00-00000"))
         item = self.tableWidgetRelationships.item(0, 3)
         item.setText(insert("graphWindow", "00-00002"))
-        item = self.tableWidgetRelationships.item(1, 0)
-        item.setText(insert("graphWindow", "00-00002"))
-        item = self.tableWidgetRelationships.item(1, 1)
-        item.setText(insert("graphWindow", "scanning"))
-        item = self.tableWidgetRelationships.item(1, 2)
-        item.setText(insert("graphWindow", "00-00001"))
-        item = self.tableWidgetRelationships.item(1, 3)
-        item.setText(insert("graphWindow", "00-00005"))
-        item = self.tableWidgetRelationships.item(2, 0)
-        item.setText(insert("graphWindow", "00-00003"))
-        item = self.tableWidgetRelationships.item(2, 1)
-        item.setText(insert("graphWindow", "ping"))
-        item = self.tableWidgetRelationships.item(2, 2)
-        item.setText(insert("graphWindow", "00-00001"))
-        item = self.tableWidgetRelationships.item(2, 3)
-        item.setText(insert("graphWindow", "00-00004"))
-        item = self.tableWidgetRelationships.item(3, 0)
-        item.setText(insert("graphWindow", "00-00004"))
-        item = self.tableWidgetRelationships.item(3, 1)
-        item.setText(insert("graphWindow", "broadcasting"))
-        item = self.tableWidgetRelationships.item(3, 2)
-        item.setText(insert("graphWindow", "00-00003"))
-        item = self.tableWidgetRelationships.item(3, 3)
-        item.setText(insert("graphWindow", "00-00008"))
         self.tableWidgetRelationships.setSortingEnabled(__sortingEnabled)
 
         
 
     #adds data to given tree widget with two columns
-    def addTableData(self, table, col1, col2, col3):
+    def addTableData(self, table, label, parent, child):
         
         table.insertRow(0)
 
@@ -806,9 +771,9 @@ class GraphWindow(object):
         item.setFlags(QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
         table.setItem(0, 0, item)
         
-        table.setItem(0, 1, QtWidgets.QTableWidgetItem(col1))
-        table.setItem(0, 2, QtWidgets.QTableWidgetItem(col2))
-        table.setItem(0, 3, QtWidgets.QTableWidgetItem(col3))
+        table.setItem(0, 1, QtWidgets.QTableWidgetItem(label))
+        table.setItem(0, 2, QtWidgets.QTableWidgetItem(parent))
+        table.setItem(0, 3, QtWidgets.QTableWidgetItem(child))
 
     #clears data from line/text edits after adding to tree widget
     def clearData(self, table, col1, col2, col3):
@@ -821,6 +786,28 @@ class GraphWindow(object):
         selectedItems = table.selectionModel().selectedRows() 
         for item in sorted(selectedItems):
                 table.removeRow(item.row())
+
+    #add new node to tabular view
+    def addNewNode(self, table, nodeCount, name, timestamp, description, reference, creator, icon, source):
+    
+        table.insertRow(1)
+
+        item = QtWidgets.QTableWidgetItem()
+        item.setFlags(QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+        item.setCheckState(QtCore.Qt.Checked)
+        table.setItem(1, 0, item)
+
+        table.setItem(1, 2, QtWidgets.QTableWidgetItem(name))
+        table.setItem(1, 3, QtWidgets.QTableWidgetItem(timestamp))
+        table.setItem(1, 4, QtWidgets.QTableWidgetItem(description))
+        table.setItem(1, 5, QtWidgets.QTableWidgetItem(reference))
+        table.setItem(1, 6, QtWidgets.QTableWidgetItem(creator))
+        table.setItem(1, 7, QtWidgets.QTableWidgetItem(icon))
+        table.setItem(1, 8, QtWidgets.QTableWidgetItem(source))
+
+
+        
+            
 
 if __name__ == "__main__":
     import sys
