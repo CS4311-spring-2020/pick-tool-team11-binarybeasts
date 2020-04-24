@@ -4,15 +4,20 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog, QDialog, QApplication, QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QFormLayout, QComboBox, QDateTimeEdit, QPushButton, QInputDialog, QLineEdit, QTextEdit, QLabel
 import sys
 import os
+import json
 sys.path.insert(1,os.path.dirname(__file__)+"/..")
 
 from QGraphViz.QGraphViz import QGraphViz, QGraphVizManipulationMode
-from QGraphViz.DotParser import Graph, GraphType, Node, Edge
+from QGraphViz.DotParser import Graph, GraphType, Node, Edge, DotParser
+from QGraphViz.DotParser.Graph import Graph
+from QGraphViz.DotParser.Node import Node
+from QGraphViz.DotParser.Edge import Edge
 from QGraphViz.Engines import Dot
 
 
 class GraphWindow(object):
     def setupUi(self, graphWindow):
+        self.graphWin = graphWindow.setObjectName("graphWindow")
         graphWindow.setObjectName("graphWindow")
         graphWindow.resize(1155, 895)
         graphWindow.setDockNestingEnabled(True)
@@ -121,17 +126,22 @@ class GraphWindow(object):
         self.TimelineOrientation.addItem("") # Vertical
         self.gridLayout_3.addWidget(self.TimelineOrientation, 2, 4, 1, 1)
 
-        
+        self.newRelationshipFlag = False
         # Events
         def node_selected(node):
-            if(qgv.manipulation_mode==QGraphVizManipulationMode.Node_remove_Mode):
+            if(self.qgv.manipulation_mode==QGraphVizManipulationMode.Node_remove_Mode):
                 print("Node {} removed".format(node))
+                removeNode(node)
             else:
                 print("Node selected {}".format(node))
+                if(self.newRelationshipFlag == True):
+                    update_json(node)
+                    self.newRelationshipFlag = False
 
         def edge_selected(edge):
-            if(qgv.manipulation_mode==QGraphVizManipulationMode.Edge_remove_Mode):
+            if(self.qgv.manipulation_mode==QGraphVizManipulationMode.Edge_remove_Mode):
                 print("Edge {} removed".format(edge))
+                removeRelationship(edge)
             else:
                 print("Edge selected {}".format(edge))
 
@@ -146,7 +156,7 @@ class GraphWindow(object):
 
         # Create QGraphViz graph widget
         show_subgraphs=True
-        qgv = QGraphViz(
+        self.qgv = QGraphViz(
             show_subgraphs=show_subgraphs,
             
             node_selected_callback=node_selected,
@@ -158,17 +168,24 @@ class GraphWindow(object):
 
             hilight_Nodes=True,
             hilight_Edges=True
-            )
-        qgv.setStyleSheet("background-color:white;")
+
+        )
+
+        self.nodeId = 0
+        self.relationshipId = 0
+        f = open('ui/windows/graph.json', 'r+')
+        f.truncate(0)
+        
+        self.qgv.setStyleSheet("background-color:white;")
 
         # Create A new Graph using Dot layout engine
-        qgv.new(Dot(Graph("Main_Graph"), show_subgraphs=show_subgraphs))
+        self.qgv.new(Dot(Graph("Main_Graph"), show_subgraphs=show_subgraphs))
 
 
         # Build the graph (the layout engine organizes where the nodes and connections are)
-        qgv.build()
+        self.qgv.build()
         # Save it to a file to be loaded by Graphviz if needed
-        qgv.save("test.gv")
+        self.qgv.save("test.gv")
         
 
         # Create a widget to handle the QGraphViz object
@@ -176,43 +193,73 @@ class GraphWindow(object):
         graphWidget.setLayout(QVBoxLayout())
         self.gridLayout_3.addWidget(graphWidget, 3, 0, 1, 6)
         # Add the QGraphViz object to the layout
-        graphWidget.layout().addWidget(qgv)
-
+        graphWidget.layout().addWidget(self.qgv)
+        
 
         #Buttons Functionality
         def manipulate():
-            qgv.manipulation_mode=QGraphVizManipulationMode.Nodes_Move_Mode
+            self.qgv.manipulation_mode=QGraphVizManipulationMode.Nodes_Move_Mode
 
+        #export as a CSV file
         def save():
-            fname = QFileDialog.getSaveFileName(qgv, "Save", "", "*.csv")
+            fname = QFileDialog.getSaveFileName(self.qgv, "Save", "", "*.csv")
             if(fname[0]!=""):
-                qgv.save(fname[0])
+                self.qgv.save(fname[0])
+                print(fname)
+                print(fname[0])
+  
 
-            #fname = QFileDialog.getSaveFileName(qgv, "Save", "", "*.json")
+            #fname = QFileDialog.getSaveFileName(self.qgv, "Save", "", "*.gv")
             #if(fname[0]!=""):
-            #    qgv.saveAsJson(fname[0])  
-
-            #fname = QFileDialog.getSaveFileName(qgv, "Save", "", "*.gv")
-            #if(fname[0]!=""):
-            #    qgv.save(fname[0])
+            #    self.qgv.save(fname[0])
             
         def new():
-            qgv.engine.graph = Graph("MainGraph")
-            qgv.build()
-            qgv.repaint()
+            self.qgv.engine.graph = Graph("MainGraph")
+            self.qgv.build()
+            self.qgv.repaint()
+
+            #clear all data from nodes table widget
+            rowCount = self.tableWidgetNodes.rowCount()
+            for x in range(1, rowCount):
+                self.tableWidgetNodes.removeRow(x)
+            self.tableWidgetNodes.removeRow(1)
+            
+            #clear all data from relationships table widget
+            rowCount = self.tableWidgetRelationships.rowCount()
+            for x in range(rowCount):
+                self.tableWidgetRelationships.removeRow(x)
+
+            #update json file
+            fname = "ui/windows/graph.json"
+            self.qgv.saveAsJson(fname)
 
         def load():
-            fname = QFileDialog.getOpenFileName(qgv, "Open", "", "*.csv")
+            fname = QFileDialog.getOpenFileName(self.qgv, "Open", "", "*.csv")
             if(fname[0]!=""):
-                qgv.load_file(fname[0])
+                self.qgv.load_file(fname[0])
 
-            #fname = QFileDialog.getOpenFileName(qgv, "Open", "", "*.json")
-            #if(fname[0]!=""):
-            #    qgv.loadAJson(fname[0])
+            #populate json file with new graph   
+            fname = "ui/windows/graph.json"
+            self.qgv.saveAsJson(fname)
 
-            #fname = QFileDialog.getOpenFileName(qgv, "Open", "", "*.gv")
-            #if(fname[0]!=""):
-            #    qgv.load_file(fname[0])
+            #open json file and load data
+            with open('ui/windows/graph.json') as json_file:
+                data = json.load(json_file)
+
+            #iterate through each node and add it to the nodes table widget
+            nodesData = data["nodes"]
+            for node in nodesData:
+                self.addNewNode(self.tableWidgetNodes, node["kwargs"]["id"], node["kwargs"]["label"], node["kwargs"]["timestamp"], node["kwargs"]["description"], node["kwargs"]["leReference"], node["kwargs"]["creator"], node["kwargs"]["shape"], node["kwargs"]["leSource"])
+
+            #iterate through each edge and add it to the relationships table widget
+            relationshipsData = data["edges"]
+            for edge in relationshipsData:
+                try:
+                    label = edge["kwargs"]["label"]
+                except KeyError:
+                    label = ""
+                self.addTableData(self.tableWidgetRelationships, label, edge["source"], edge["dest"])
+
 
         def add_node():
 
@@ -232,7 +279,7 @@ class GraphWindow(object):
             main_layout = QVBoxLayout()
             addNodeLayout = QFormLayout()
             buttons_layout = QHBoxLayout()
-
+            
             main_layout.addLayout(addNodeLayout)
             main_layout.addLayout(buttons_layout)
             addNodeDialog.setLayout(main_layout)
@@ -300,7 +347,7 @@ class GraphWindow(object):
                 addNodeDialog.close()
 
             pbOK.clicked.connect(ok)
-            pbOK.clicked.connect(lambda: self.addNewNode(self.tableWidgetNodes, self.nodes, leNodeName.text(), dtNodeTimestamp.text(), teNodeDescription.toPlainText(), leLogEntryReference.text(), cbxLogCreator.currentText(), addNodeDialog.node_type, leLogEntrySource.text()))
+            pbOK.clicked.connect(lambda: self.addNewNode(self.tableWidgetNodes, str(self.nodeId), leNodeName.text(), dtNodeTimestamp.text(), teNodeDescription.toPlainText(), leLogEntryReference.text(), cbxLogCreator.currentText(), addNodeDialog.node_type, leLogEntrySource.text()))
             pbCancel.clicked.connect(cancel)
 
             buttons_layout.addWidget(pbOK)
@@ -309,29 +356,96 @@ class GraphWindow(object):
 
             
             if addNodeDialog.OK and addNodeDialog.node_name != '':
-                    qgv.addNode(qgv.engine.graph, addNodeDialog.node_name, label=addNodeDialog.node_label, description=addNodeDialog.node_description , timestamp=addNodeDialog.node_timestamp, leReference= addNodeDialog.node_logEntryReference, creator=addNodeDialog.node_logCreator, leSource=addNodeDialog.node_logEntrySource, shape=addNodeDialog.node_type)
-                    qgv.build()
+                    self.qgv.addNode(self.qgv.engine.graph, addNodeDialog.node_name, id=str(self.nodeId), label=addNodeDialog.node_label, description=addNodeDialog.node_description , timestamp=addNodeDialog.node_timestamp, leReference= addNodeDialog.node_logEntryReference, creator=addNodeDialog.node_logCreator, leSource=addNodeDialog.node_logEntrySource, shape=addNodeDialog.node_type)
+                    self.qgv.build()
+                    self.nodeId += 1
+                    self.newRelationshipFlag = True
 
+        #remove node button event
         def rem_node():
-            qgv.manipulation_mode=QGraphVizManipulationMode.Node_remove_Mode
+            self.qgv.manipulation_mode=QGraphVizManipulationMode.Node_remove_Mode
             for btn in buttons_list:
                 btn.setChecked(False)
             btnRemNode.setChecked(True)
 
-
+        #remove edge button event
         def rem_edge():
-            qgv.manipulation_mode=QGraphVizManipulationMode.Edge_remove_Mode()
+            self.qgv.manipulation_mode=QGraphVizManipulationMode.Edge_remove_Mode
             for btn in buttons_list:
                 btn.setChecked(False)
             btnRemEdge.setChecked(True)
 
+        #remove edge button event
         def add_edge():
-            qgv.manipulation_mode=QGraphVizManipulationMode.Edges_Connect_Mode
+            self.qgv.manipulation_mode=QGraphVizManipulationMode.Edges_Connect_Mode
             for btn in buttons_list:
                 btn.setChecked(False)
             btnAddEdge.setChecked(True)
-           
+            
+        #updates json file with all graph properties (nodes & edges)
+        def update_json(item):
+            fname = "ui/windows/graph.json"
+            self.qgv.saveAsJson(fname)
+            addRelationshipToTable()
 
+        #remove node from node table widget
+        def removeNode(node):
+            fname = "ui/windows/graph.json"
+            self.qgv.saveAsJson(fname)
+            self.row = getNodeRowNumber(self.tableWidgetNodes, node.name)
+            self.tableWidgetNodes.removeRow(self.row)
+      
+        #remove relationship from relationship table widget
+        def removeRelationship(edge):
+            fname = "ui/windows/graph.json"
+            self.qgv.saveAsJson(fname)
+            self.row = getEdgeRowNumber(self.tableWidgetRelationships, edge.source.name, edge.dest.name)
+            self.tableWidgetRelationships.removeRow(self.row)
+
+        #return row number for given node
+        def getNodeRowNumber(widget,nodeName):
+            rowCount = widget.rowCount()
+            for x in range(rowCount):
+                node = widget.item(x, 2).text()
+                if node == nodeName:
+                    return x
+
+        #return row number for given edge
+        def getEdgeRowNumber(widget,edgeSource, edgeDestination):
+            print(edgeSource)
+            print(edgeDestination)
+            rowCount = widget.rowCount()
+            for x in range(rowCount):
+                edgeSrc = widget.item(x, 2).text()
+                edgeDest = widget.item(x, 3).text()
+                if edgeSrc == edgeSource and edgeDest == edgeDestination:
+                    return x
+        
+        #add new relationship from graph onto relationship table
+        def addRelationshipToTable():
+            with open('ui/windows/graph.json') as json_file:
+                data = json.load(json_file)
+
+            self.index = len(data['edges']) - 1
+
+            #new table widget item
+            self.tableWidgetRelationships.insertRow(0)
+            item = QtWidgets.QTableWidgetItem()
+            item.setCheckState(QtCore.Qt.Unchecked)
+            item.setFlags(QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+            self.tableWidgetRelationships.setItem(0, 0, item)
+            
+            #write data on table widget in corresponding cells
+            insert = QtCore.QCoreApplication.translate
+            item = self.tableWidgetRelationships.item(0, 0)
+            item.setText(insert("GraphWindow", str(self.relationshipId)))
+            self.tableWidgetRelationships.setItem(0, 2, QtWidgets.QTableWidgetItem(data["edges"][self.index]["source"]))
+            self.tableWidgetRelationships.setItem(0, 3, QtWidgets.QTableWidgetItem(data["edges"][self.index]["dest"]))
+
+            self.relationshipId += 1
+
+
+        
         # Add two horizontal layouts (pannels to hold buttons)
         hpanelTop=QHBoxLayout()
         graphWidget.layout().addLayout(hpanelTop)
@@ -529,7 +643,7 @@ class GraphWindow(object):
         # a relationship is the length of a single relationship
         relationship = 4
         # relationships is the length of a set of relationships
-        relationships = 1
+        relationships = 0
         # setting the relationship table dimensions
         self.tableWidgetRelationships.setColumnCount(relationship)
         self.tableWidgetRelationships.setRowCount(relationships)
@@ -556,27 +670,30 @@ class GraphWindow(object):
 
         self.tableWidgetRelationships.horizontalHeader().setVisible(True)
         self.tableWidgetRelationships.horizontalHeader().setMinimumSectionSize(39)
+        self.tableWidgetRelationships.horizontalHeader().setSortIndicatorShown(True)
         self.tableWidgetRelationships.horizontalHeader().setStretchLastSection(True)
+
         self.tableWidgetRelationships.verticalHeader().setVisible(True)
         self.tableWidgetRelationships.verticalHeader().setDefaultSectionSize(30)
-        self.tableWidgetRelationships.verticalHeader().setMinimumSectionSize(30)
+        self.tableWidgetRelationships.verticalHeader().setSortIndicatorShown(False)
         self.verticalLayout.addWidget(self.tableWidgetRelationships)
-        self.pushButtonDeleteRelationship = QtWidgets.QPushButton(self.subwindow_Relationship)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pushButtonDeleteRelationship.sizePolicy().hasHeightForWidth())
+
+        #self.pushButtonDeleteRelationship = QtWidgets.QPushButton(self.subwindow_Relationship)
+        #sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        #sizePolicy.setHorizontalStretch(0)
+        #sizePolicy.setVerticalStretch(0)
+        #sizePolicy.setHeightForWidth(self.pushButtonDeleteRelationship.sizePolicy().hasHeightForWidth())
 
         #delete relationship button
-        self.pushButtonDeleteRelationship.setSizePolicy(sizePolicy)
-        self.pushButtonDeleteRelationship.setObjectName("pushButtonDeleteRelationship")
-        self.verticalLayout.addWidget(self.pushButtonDeleteRelationship)
+        #self.pushButtonDeleteRelationship.setSizePolicy(sizePolicy)
+        #self.pushButtonDeleteRelationship.setObjectName("pushButtonDeleteRelationship")
+        #self.verticalLayout.addWidget(self.pushButtonDeleteRelationship)
 
         
         self.mdiArea.addSubWindow(self.subwindow_Relationship)
         self.mdiArea.addSubWindow(self.subwindow_Table)
         self.gridLayout.addWidget(self.mdiArea, 1, 0, 1, 1)
-        self.mdiArea.addSubWindow(self.subwindow_Graph)
+        self.graphSubWin = self.mdiArea.addSubWindow(self.subwindow_Graph)
 
     #*------------------------------Menu Bar---------------------------------------------------*#
         graphWindow.setCentralWidget(self.centralwidget)
@@ -618,7 +735,9 @@ class GraphWindow(object):
 
         self.actionCascade = QtWidgets.QAction(graphWindow)
         self.actionCascade.setObjectName("actionCascade")
+        self.actionCascade.triggered.connect(self.mdiArea.cascadeSubWindows)
 
+        
 
         self.menuOpen_Window.addAction(self.actionGraphical_View)
         self.menuOpen_Window.addAction(self.actionTabular_View)
@@ -637,7 +756,6 @@ class GraphWindow(object):
 
         self.retranslateUi(graphWindow)
         self.actionTile.triggered.connect(self.mdiArea.tileSubWindows)
-        self.actionCascade.triggered.connect(self.mdiArea.cascadeSubWindows)
         QtCore.QMetaObject.connectSlotsByName(graphWindow)
 
     def retranslateUi(self, graphWindow):
@@ -727,16 +845,17 @@ class GraphWindow(object):
 
         self.pushButtonAddRelationship.setText(insert("graphWindow", "Add Relationship"))
         self.pushButtonAddRelationship.clicked.connect(lambda: self.addTableData(self.tableWidgetRelationships, self.lineEditRelationship.text(), self.lineEditParent.text(), self.lineEditChild.text()))
+        self.pushButtonAddRelationship.clicked.connect(lambda: self.addNewRelationshipToGraph(self.qgv, self.lineEditRelationship.text(), self.lineEditParent.text(), self.lineEditChild.text()))
         self.pushButtonAddRelationship.clicked.connect(lambda: self.clearData(self.tableWidgetRelationships, self.lineEditRelationship, self.lineEditParent, self.lineEditChild))
 
-        self.pushButtonDeleteRelationship.setText(insert("graphWindow", "Delete Relationship"))
-        self.pushButtonDeleteRelationship.clicked.connect(lambda: self.removeTableData(self.tableWidgetRelationships))
+        #self.pushButtonDeleteRelationship.setText(insert("graphWindow", "Delete Relationship"))
+        #self.pushButtonDeleteRelationship.clicked.connect(lambda: self.deleteRelationship(self.tableWidgetRelationships))
 
         self.labelRelationship.setText(insert("graphWindow", "Relationship Label:"))
-        self.labelParent.setText(insert("graphWindow", "Parent Node:"))
-        self.labelChild.setText(insert("graphWindow", "Child Node:"))
+        self.labelParent.setText(insert("graphWindow", "Parent Node Name:"))
+        self.labelChild.setText(insert("graphWindow", "Child Node Name:"))
 
-        
+        self.tableWidgetRelationships.setSortingEnabled(True)
         item = self.tableWidgetRelationships.horizontalHeaderItem(0)
         item.setText(insert("graphWindow", "Relationship ID"))
         item = self.tableWidgetRelationships.horizontalHeaderItem(1)
@@ -748,15 +867,7 @@ class GraphWindow(object):
         __sortingEnabled = self.tableWidgetRelationships.isSortingEnabled()
         self.tableWidgetRelationships.setSortingEnabled(False)
 
-        #test data
-        item = self.tableWidgetRelationships.item(0, 0)
-        item.setText(insert("graphWindow", "00-00001"))
-        item = self.tableWidgetRelationships.item(0, 1)
-        item.setText(insert("graphWindow", "intercepting"))
-        item = self.tableWidgetRelationships.item(0, 2)
-        item.setText(insert("graphWindow", "00-00000"))
-        item = self.tableWidgetRelationships.item(0, 3)
-        item.setText(insert("graphWindow", "00-00002"))
+        
         self.tableWidgetRelationships.setSortingEnabled(__sortingEnabled)
 
         
@@ -770,10 +881,16 @@ class GraphWindow(object):
         item.setCheckState(QtCore.Qt.Unchecked)
         item.setFlags(QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
         table.setItem(0, 0, item)
+
+        insert = QtCore.QCoreApplication.translate
+        item = self.tableWidgetRelationships.item(0, 0)
+        item.setText(insert("GraphWindow", str(self.relationshipId)))
         
         table.setItem(0, 1, QtWidgets.QTableWidgetItem(label))
         table.setItem(0, 2, QtWidgets.QTableWidgetItem(parent))
         table.setItem(0, 3, QtWidgets.QTableWidgetItem(child))
+
+        self.relationshipId += 1
 
     #clears data from line/text edits after adding to tree widget
     def clearData(self, table, col1, col2, col3):
@@ -782,13 +899,16 @@ class GraphWindow(object):
             col3.clear()
     
     #removes selected items from given tree widget
-    def removeTableData(self, table):
+    def deleteRelationship(self, table):
         selectedItems = table.selectionModel().selectedRows() 
         for item in sorted(selectedItems):
-                table.removeRow(item.row())
+            print(item)
+            table.removeRow(item.row())
+
+        
 
     #add new node to tabular view
-    def addNewNode(self, table, nodeCount, name, timestamp, description, reference, creator, icon, source):
+    def addNewNode(self, table, nodeId, name, timestamp, description, reference, creator, icon, source):
     
         table.insertRow(1)
 
@@ -797,6 +917,7 @@ class GraphWindow(object):
         item.setCheckState(QtCore.Qt.Checked)
         table.setItem(1, 0, item)
 
+        table.setItem(1, 1, QtWidgets.QTableWidgetItem(nodeId))
         table.setItem(1, 2, QtWidgets.QTableWidgetItem(name))
         table.setItem(1, 3, QtWidgets.QTableWidgetItem(timestamp))
         table.setItem(1, 4, QtWidgets.QTableWidgetItem(description))
@@ -806,8 +927,22 @@ class GraphWindow(object):
         table.setItem(1, 8, QtWidgets.QTableWidgetItem(source))
 
 
+    #add new relationship from relationship table to graph
+    def addNewRelationshipToGraph(self, graph, relationshipLabel, parent, child):
+        #retrive node objects given node names
+        parentNode = Graph.findNode(self.qgv.engine.graph, parent)
+        childNode = Graph.findNode(self.qgv.engine.graph, child)
+
+        #add edge to graph
+        self.qgv.addEdge(parentNode, childNode, {"label": relationshipLabel})
+        self.qgv.build()
+
+        #update json file to keep track of all edges
+        fname = "ui/windows/graph.json"
+        self.qgv.saveAsJson(fname)
         
-            
+        self.mdiArea.setActiveSubWindow(self.graphSubWin)
+
 
 if __name__ == "__main__":
     import sys
