@@ -205,7 +205,6 @@ class GraphWindow(object):
             fname = QFileDialog.getSaveFileName(self.qgv, "Save", "", "*.csv")
             if(fname[0]!=""):
                 self.qgv.save(fname[0])
-                print(fname)
                 print(fname[0])
   
 
@@ -377,7 +376,6 @@ class GraphWindow(object):
 
         #add edge button event
         def add_edge():
-            print("true")
             self.qgv.manipulation_mode=QGraphVizManipulationMode.Edges_Connect_Mode
             for btn in buttons_list:
                 btn.setChecked(False)
@@ -386,7 +384,6 @@ class GraphWindow(object):
             
         #updates json file with all graph properties (nodes & edges)
         def update_json(item):
-            print("inside")
             fname = "ui/windows/graph.json"
             self.qgv.saveAsJson(fname)
             addRelationshipToTable()
@@ -415,8 +412,6 @@ class GraphWindow(object):
 
         #return row number for given edge
         def getEdgeRowNumber(widget,edgeSource, edgeDestination):
-            print(edgeSource)
-            print(edgeDestination)
             rowCount = widget.rowCount()
             for x in range(rowCount):
                 edgeSrc = widget.item(x, 2).text()
@@ -905,7 +900,6 @@ class GraphWindow(object):
     def deleteRelationship(self, table):
         selectedItems = table.selectionModel().selectedRows() 
         for item in sorted(selectedItems):
-            print(item)
             table.removeRow(item.row())
 
         
