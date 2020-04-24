@@ -356,10 +356,10 @@ class GraphWindow(object):
 
             
             if addNodeDialog.OK and addNodeDialog.node_name != '':
-                    self.qgv.addNode(self.qgv.engine.graph, addNodeDialog.node_name, id=str(self.nodeId), label=addNodeDialog.node_label, description=addNodeDialog.node_description , timestamp=addNodeDialog.node_timestamp, leReference= addNodeDialog.node_logEntryReference, creator=addNodeDialog.node_logCreator, leSource=addNodeDialog.node_logEntrySource, shape=addNodeDialog.node_type)
-                    self.qgv.build()
-                    self.nodeId += 1
-                    self.newRelationshipFlag = True
+                self.qgv.addNode(self.qgv.engine.graph, addNodeDialog.node_name, id=str(self.nodeId), label=addNodeDialog.node_label, description=addNodeDialog.node_description , timestamp=addNodeDialog.node_timestamp, leReference= addNodeDialog.node_logEntryReference, creator=addNodeDialog.node_logCreator, leSource=addNodeDialog.node_logEntrySource, shape=addNodeDialog.node_type)
+                self.qgv.build()
+                self.nodeId += 1
+                    
 
         #remove node button event
         def rem_node():
@@ -375,15 +375,18 @@ class GraphWindow(object):
                 btn.setChecked(False)
             btnRemEdge.setChecked(True)
 
-        #remove edge button event
+        #add edge button event
         def add_edge():
+            print("true")
             self.qgv.manipulation_mode=QGraphVizManipulationMode.Edges_Connect_Mode
             for btn in buttons_list:
                 btn.setChecked(False)
             btnAddEdge.setChecked(True)
+            self.newRelationshipFlag = True
             
         #updates json file with all graph properties (nodes & edges)
         def update_json(item):
+            print("inside")
             fname = "ui/windows/graph.json"
             self.qgv.saveAsJson(fname)
             addRelationshipToTable()
