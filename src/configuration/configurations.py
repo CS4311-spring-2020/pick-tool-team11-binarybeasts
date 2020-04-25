@@ -1,8 +1,9 @@
-from association.vector import Vector
-from config.icon import Icon
-from ingestion.splunk import Splunk
 import os
+from association.vector import Vector
+from configuration.icon import Icon
+from ingestion.splunk import Splunk
 from threading import Thread
+from configuration.database_writer import DatabaseWriter
 
 
 class Configuration:
@@ -38,16 +39,20 @@ class Configuration:
 
         Configuration.__instance = self
 
-    def set_team(self, is_lead, lead_IP, established_connections):
-        self.is_lead = is_lead
+    def set_team(self, is_Lead, lead_IP, established_connections):
+        self.is_lead = is_Lead
         self.lead_IP = lead_IP
         self.established_connections = established_connections
+        DatabaseWriter.write_dict_to_collection(self.get_team_dict(), DatabaseWriter.COLLECTION_TEAM)
+        DatabaseWriter.print_collection(DatabaseWriter.COLLECTION_TEAM)
 
     def set_event(self, name, description, start_time, end_time):
         self.event_name = name
         self.event_description = description
         self.event_start = start_time
         self.event_end = end_time
+        DatabaseWriter.write_dict_to_collection(self.get_event_dict(), DatabaseWriter.COLLECTION_EVENT)
+        DatabaseWriter.print_collection(DatabaseWriter.COLLECTION_EVENT)
 
     def set_directories(self, root_dir, red_dir, blue_dir, white_dir):
         self.root_directory = root_dir
@@ -71,9 +76,12 @@ class Configuration:
         self.white_files = self.get_filepaths_from_directory(white_dir)
         print(self.white_files)
 
+        DatabaseWriter.write_dict_to_collection(self.get_directories_dict(), DatabaseWriter.COLLECTION_DIRECTORY)
+        DatabaseWriter.print_collection(DatabaseWriter.COLLECTION_DIRECTORY)
+
         self.splunk = Splunk(self.root_files, self.red_files, self.blue_files, self.white_files)
         self.splunk.connect()
-        Thread(target=self.splunk.start_ingestion()).start()
+        Thread(target=self.splunk.start_ingestion).start()
 
     def get_filepaths_from_directory(self, dir):
         file_paths = []

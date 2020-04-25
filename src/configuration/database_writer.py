@@ -4,11 +4,11 @@ import pymongo
 class DatabaseWriter:
 
     # Possible connection names
-    team_collection = "team"
-    event_collection = "event"
-    directory_collection = "directory"
-    vector_collection = "vectors"
-    icon_collection = "icons"
+    COLLECTION_TEAM = "team"
+    COLLECTION_EVENT = "event"
+    COLLECTION_DIRECTORY = "directory"
+    COLLECTION_VECTOR = "vectors"
+    COLLECTION_ICON = "icons"
 
     @staticmethod
     def connect_to_database():
@@ -20,9 +20,9 @@ class DatabaseWriter:
     def write_dict_to_collection(dict_to_write, collection_name):
         database = DatabaseWriter.connect_to_database()
         collection = database[collection_name]
-        if (collection_name == DatabaseWriter.team_collection or
-                collection_name == DatabaseWriter.event_collection or
-                collection_name == DatabaseWriter.directory_collection):
+        if (collection_name == DatabaseWriter.COLLECTION_TEAM or
+                collection_name == DatabaseWriter.COLLECTION_EVENT or
+                collection_name == DatabaseWriter.COLLECTION_DIRECTORY):
             collection.delete_many({})
         collection.insert_one(dict_to_write)
 

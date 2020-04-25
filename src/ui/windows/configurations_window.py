@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from ui.common import menu_bar
-from config.configurations import Configuration
+from configuration.configurations import Configuration
 
 
 class ConfigurationsWindow(object):
@@ -312,6 +312,7 @@ class ConfigurationsWindow(object):
         self.leadIPAddrLabel.setText(insert("configurationsWindow", "Lead IP Address:"))
         self.numOfConnectionsLabel.setText(insert("configurationsWindow", "No. of estrablished connections:"))
         self.connectBttn.setText(insert("configurationsWindow", "Connect"))
+        self.connectBttn.clicked.connect(lambda: configuration.set_team(self.leadCheckbox.isChecked(), self.leadIPAddr.text(), self.numOfConnections.text()))
         self.numOfConnections.setText(insert("configurationsWindow", "5"))  
 #*--------------------------Event Configuration Tab--------------------------------------------------*#
         self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.EventConfigurationTab), insert("configurationsWindow", "Event Configuration"))
@@ -321,6 +322,7 @@ class ConfigurationsWindow(object):
         self.eventStartLabel.setText(insert("configurationsWindow", "Event Start Timestamp:"))
         self.eventEndLabel.setText(insert("configurationsWindow", "Event End Timestamp:"))
         self.saveEventBttn.setText(insert("configurationsWindow", "Save Event"))
+        self.saveEventBttn.clicked.connect(lambda: configuration.set_event(self.eventName.text(), self.eventDesc.toPlainText(), self.eventStart.text(), self.eventEnd.text()))
 #*--------------------------Directory Configuration Tab--------------------------------------------------*#
         self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.DirectoryConfigurationTab), insert("configurationsWindow", "Directory Configuration"))
         #Set Labels & buttons

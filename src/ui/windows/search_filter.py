@@ -1,7 +1,7 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from ui.common import menu_bar
-from config.configurations import Configuration
+from configuration.configurations import Configuration
 from ingestion.splunk import Splunk
 
 
