@@ -1,4 +1,4 @@
-from config.vector import Vector
+from association.vector import Vector
 from config.icon import Icon
 from ingestion.splunk import Splunk
 import os
@@ -12,7 +12,7 @@ class Configuration:
     @staticmethod
     def get_instance():
         if Configuration.__instance == None:
-            return Configuration()
+            Configuration.__instance = Configuration()
         return Configuration.__instance
 
     def __init__(self):
@@ -92,3 +92,26 @@ class Configuration:
     def add_icon(self, name, source):
         new_icon = Icon(name, source)
         self.vectors.append(new_icon)
+
+    def get_team_dict(self):
+        return {"isLead": self.is_lead,
+                "lead_IP": self.lead_IP,
+                "established_connections": self.established_connections}
+
+    def get_event_dict(self):
+        return {"event_name": self.event_name,
+                "event_description": self.event_description,
+                "event_start": self.event_start,
+                "event_end": self.event_end}
+
+    def get_directories_dict(self):
+        return {"root_directory": self.root_directory,
+                "red_directory": self.red_directory,
+                "blue_directory": self.blue_directory,
+                "white_directory": self.white_directory}
+
+    def get_list_of_vector_dicts(self):
+        return [vector.get_dict() for vector in self.vectors]
+
+    def get_list_of_icon_dicts(self):
+        return [icon.get_dict() for icon in self.icons]

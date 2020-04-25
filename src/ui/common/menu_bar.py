@@ -16,7 +16,6 @@ class PickMenuBar(QMenuBar):
     # <WINDOW NAME>.setMenuBar(self.menubar)
 
     def __init__(self, parent: typing.Optional[QWidget] = ..., omit='') -> None:
-        print("OMIT ====" + omit)
         super().__init__(parent)
         self.setGeometry(QtCore.QRect(0, 0, 870, 22))
         self.setObjectName("menubar")
@@ -50,7 +49,6 @@ class PickMenuBar(QMenuBar):
     def addData(self, parent):
         insert = QtCore.QCoreApplication.translate
         parentClassName = parent.objectName()
-        print('PARENT CLASS NAME ==========' + parentClassName)
         self.menuMain.setTitle("Menu")
         self.actionEvent_Configuration.setText(insert(parentClassName, "Event Configuration"))
         self.actionEnforcement_Action_Report.setText(insert(parentClassName, "Enforcement Action Report"))

@@ -1,0 +1,56 @@
+{
+    "name": "Main_Graph",
+    "graph_type": 0,
+    "kwargs": {},
+    "nodes": [
+        {
+            "name": "node 1",
+            "kwargs": {
+                "id": "0",
+                "label": "node 1",
+                "description": "",
+                "timestamp": "1/1/20 12:00 AM",
+                "leReference": "",
+                "creator": "None",
+                "leSource": "",
+                "shape": "circle",
+                "width": 1
+            }
+        },
+        {
+            "name": "node2",
+            "kwargs": {
+                "id": "1",
+                "label": "node2",
+                "description": "",
+                "timestamp": "1/1/20 12:00 AM",
+                "leReference": "",
+                "creator": "None",
+                "leSource": "",
+                "shape": "box",
+                "width": 4
+            }
+        },
+        {
+            "name": "node3",
+            "kwargs": {
+                "id": "2",
+                "label": "node3",
+                "description": "",
+                "timestamp": "1/1/20 12:00 AM",
+                "leReference": "",
+                "creator": "None",
+                "leSource": "",
+                "shape": "circle",
+                "width": 1
+            }
+        }
+    ],
+    "edges": [
+        {
+            "source": "node2",
+            "dest": "node 1",
+            "kwargs": {}
+        }
+    ]
+}
