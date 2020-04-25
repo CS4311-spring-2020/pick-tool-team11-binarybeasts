@@ -1,0 +1,33 @@
+import pymongo
+
+
+class DatabaseWriter:
+
+    # Possible connection names
+    team_collection = "team"
+    event_collection = "event"
+    directory_collection = "directory"
+    vector_collection = "vectors"
+    icon_collection = "icons"
+
+    @staticmethod
+    def connect_to_database():
+        client = pymongo.MongoClient("mongodb://localhost:27017/")
+        database = client["pick_tool"]
+        return database
+
+    @staticmethod
+    def write_dict_to_collection(dict_to_write, collection_name):
+        database = DatabaseWriter.connect_to_database()
+        collection = database[collection_name]
+        if (collection_name == DatabaseWriter.team_collection or
+                collection_name == DatabaseWriter.event_collection or
+                collection_name == DatabaseWriter.directory_collection):
+            collection.delete_many({})
+        collection.insert_one(dict_to_write)
+
+    @staticmethod
+    def print_collection(collection_name):
+        print("Documents in " + collection_name + " collection:")
+        for document in DatabaseWriter.connect_to_database()[collection_name].find():
+            print(document)
