@@ -16,8 +16,8 @@ class Splunk:
 
         HOST = "localhost"
         PORT = 8089
-        USERNAME = "esmacik"
-        PASSWORD = "binarybeasts"
+        USERNAME = "binarybeasts101"
+        PASSWORD = "#2020Utep"
         # Access scheme (default: https)
         scheme = "https"
         # Your version of Splunk (default: 5.0)
