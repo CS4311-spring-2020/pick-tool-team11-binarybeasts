@@ -82,6 +82,10 @@ class FilterUi(object):
         self.filterFormLayout.setWidget(9, QtWidgets.QFormLayout.FieldRole, self.applyFilterButton)
         self.horizontalLayout_3.addLayout(self.filterFormLayout)
 
+        self.verticalLayout2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout2.setObjectName("verticalLayout2")
+        self.horizontalLayout_3.addLayout(self.verticalLayout2)
+
         self.filterView = QtWidgets.QTreeWidget(self.filterConfigurationLayout)
         self.filterView.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.filterView.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
@@ -90,11 +94,13 @@ class FilterUi(object):
         self.filterView.setObjectName("searchResultsView")
         self.filterView.setSortingEnabled(True)
         self.filterView.header().setSortIndicatorShown(True)
+        self.verticalLayout2.addWidget(self.filterView)
 
-
+        self.associateButton = QtWidgets.QPushButton(self.filterConfigurationLayout)
+        self.associateButton.setObjectName("associateButton")
+        self.verticalLayout2.addWidget(self.associateButton)
 
         # Add vector select combo box and select button
-        self.horizontalLayout_3.addWidget(self.filterView)
         self.verticalLayout.addWidget(self.filterConfigurationLayout)
         self.vectorViewLayout = QtWidgets.QGroupBox(self.mainVerticalView)
         self.vectorViewLayout.setObjectName("vectorViewLayout")
@@ -123,8 +129,7 @@ class FilterUi(object):
         self.vectorView.setAlternatingRowColors(True)
         self.vectorView.setWordWrap(False)
         self.vectorView.setObjectName("vectorView")
-
-
+        self.vectorView.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
 
         self.vectorView.header().setHighlightSections(False)
         self.verticalLayout_4.addWidget(self.vectorView)
@@ -157,6 +162,8 @@ class FilterUi(object):
         self.startTimestampLabel.setText(insert("SearchFilterWindow", "Start Timestamp"))
         self.endTimestampLabel.setText(insert("SearchFilterWindow", "End Timestamp"))
         self.applyFilterButton.setText(insert("SearchFilterWindow", "Apply Filter"))
+        self.associateButton.setText(insert("SearchFilterWindow", "Associate to Vector"))
+        self.associateButton.clicked.connect(lambda: self.associate(self.filterView, self.vectorView))
 
         # Add labels to filter view
         self.filterView.setSortingEnabled(True)
@@ -170,14 +177,13 @@ class FilterUi(object):
         __sortingEnabled = self.filterView.isSortingEnabled()
         self.filterView.setSortingEnabled(False)
 
-
         # Add sample data to filter view
         messsage = QMessageBox()
         messsage.setWindowTitle("Please wait...")
         messsage.setText("Retrieving log entries from splunk. Log entries might take a sec to load.\n\nClick OK")
         messsage.setIcon(QMessageBox.Information)
         messsage.exec_()
-        Thread(target=self.get_log_entries_thread, args=(configuration, )).start()
+        Thread(target=self.get_log_entries_thread, args=(configuration,)).start()
 
         self.filterView.setSortingEnabled(__sortingEnabled)
         self.vectorViewLayout.setTitle(insert("SearchFilterWindow", "Vector View"))
@@ -290,6 +296,10 @@ class FilterUi(object):
         # Add spaced for sample data in the vector tree widget
         for i in range(10):
             QtWidgets.QTreeWidgetItem(self.vectorView)
+
+    def associate(self, filterView, vectorView):
+        # associate logic
+        selectedItems = filterView.selectionModel().selectedRows
 
 
 if __name__ == "__main__":
