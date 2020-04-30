@@ -1,7 +1,9 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QMessageBox
 from ui.common import menu_bar
 from configuration.configurations import Configuration
+from threading import Thread
 from ingestion.splunk import Splunk
 
 
@@ -168,45 +170,15 @@ class FilterUi(object):
         __sortingEnabled = self.filterView.isSortingEnabled()
         self.filterView.setSortingEnabled(False)
 
+
         # Add sample data to filter view
-        if configuration.splunk != None:
-            all_log_entries = configuration.splunk.get_log_entries()
-            self.insert_log_entry_search_data(all_log_entries)
-        # self.filterView.topLevelItem(0).setText(0, insert("SearchFilterWindow", "0-002"))
-        # self.filterView.topLevelItem(0).setText(1, insert("SearchFilterWindow", "10/23/2019 16:00"))
-        # self.filterView.topLevelItem(0).setText(2, insert("SearchFilterWindow", "Red Team captured credentials using wireshark"))
-        # self.filterView.topLevelItem(0).setText(3, insert("SearchFilterWindow", "usr/logs/red/..."))
-        # self.filterView.topLevelItem(0).setText(4, insert("SearchFilterWindow", "Red"))
-        # self.filterView.topLevelItem(0).setText(5, insert("SearchFilterWindow", "Red"))
-        # self.filterView.topLevelItem(0).setText(6, insert("SearchFilterWindow", "/path/incident_repo"))
-        # self.filterView.topLevelItem(1).setText(0, insert("SearchFilterWindow", "0-004"))
-        # self.filterView.topLevelItem(1).setText(1, insert("SearchFilterWindow", "10/23/2019 16:18"))
-        # self.filterView.topLevelItem(1).setText(2, insert("SearchFilterWindow", "Red Team login with captured credentials using Wireshark"))
-        # self.filterView.topLevelItem(1).setText(3, insert("SearchFilterWindow", "usr/logs/red/..."))
-        # self.filterView.topLevelItem(1).setText(4, insert("SearchFilterWindow", "Red"))
-        # self.filterView.topLevelItem(1).setText(5, insert("SearchFilterWindow", "Red"))
-        # self.filterView.topLevelItem(1).setText(6, insert("SearchFilterWindow", "/path/observer_notes"))
-        # self.filterView.topLevelItem(2).setText(0, insert("SearchFilterWindow", "0-006"))
-        # self.filterView.topLevelItem(2).setText(1, insert("SearchFilterWindow", "10/23/2019 16:27"))
-        # self.filterView.topLevelItem(2).setText(2, insert("SearchFilterWindow", "Defenders disabled the account"))
-        # self.filterView.topLevelItem(2).setText(3, insert("SearchFilterWindow", "usr/logs/red/..."))
-        # self.filterView.topLevelItem(2).setText(4, insert("SearchFilterWindow", "Blue"))
-        # self.filterView.topLevelItem(2).setText(5, insert("SearchFilterWindow", "Blue"))
-        # self.filterView.topLevelItem(2).setText(6, insert("SearchFilterWindow", "/path/incident_repo"))
-        # self.filterView.topLevelItem(3).setText(0, insert("SearchFilterWindow", "0-009"))
-        # self.filterView.topLevelItem(3).setText(1, insert("SearchFilterWindow", "10/23/2019 16:27"))
-        # self.filterView.topLevelItem(3).setText(2, insert("SearchFilterWindow", "Red team login was detected by Wireshark"))
-        # self.filterView.topLevelItem(3).setText(3, insert("SearchFilterWindow", "usr/logs/red/..."))
-        # self.filterView.topLevelItem(3).setText(4, insert("SearchFilterWindow", "Blue"))
-        # self.filterView.topLevelItem(3).setText(5, insert("SearchFilterWindow", "Blue"))
-        # self.filterView.topLevelItem(3).setText(6, insert("SearchFilterWindow", "/path/incident_repo"))
-        # self.filterView.topLevelItem(4).setText(0, insert("SearchFilterWindow", "0-010"))
-        # self.filterView.topLevelItem(4).setText(1, insert("SearchFilterWindow", "10/23/2019 16:27"))
-        # self.filterView.topLevelItem(4).setText(2, insert("SearchFilterWindow", "Defenders disabled the account"))
-        # self.filterView.topLevelItem(4).setText(3, insert("SearchFilterWindow", "usr/logs/red/..."))
-        # self.filterView.topLevelItem(4).setText(4, insert("SearchFilterWindow", "White"))
-        # self.filterView.topLevelItem(4).setText(5, insert("SearchFilterWindow", "Blue"))
-        # self.filterView.topLevelItem(4).setText(6, insert("SearchFilterWindow", "/path/incident_repo"))
+        messsage = QMessageBox()
+        messsage.setWindowTitle("Please wait...")
+        messsage.setText("Retrieving log entries from splunk. Log entries might take a sec to load.\n\nClick OK")
+        messsage.setIcon(QMessageBox.Information)
+        messsage.exec_()
+        Thread(target=self.get_log_entries_thread, args=(configuration, )).start()
+
         self.filterView.setSortingEnabled(__sortingEnabled)
         self.vectorViewLayout.setTitle(insert("SearchFilterWindow", "Vector View"))
 
@@ -292,6 +264,11 @@ class FilterUi(object):
         # self.vectorView.topLevelItem(9).setText(5, insert("SearchFilterWindow", "Blue"))
         # self.vectorView.topLevelItem(9).setText(6, insert("SearchFilterWindow", "/path/incident/report2.pd"))
         self.vectorView.setSortingEnabled(__sortingEnabled)
+
+    def get_log_entries_thread(self, configuration):
+        if configuration.splunk:
+            all_log_entries = configuration.splunk.get_log_entries()
+            self.insert_log_entry_search_data(all_log_entries)
 
     def insert_log_entry_search_data(self, log_entries):
         insert = QtCore.QCoreApplication.translate

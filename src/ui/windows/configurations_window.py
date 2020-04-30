@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from ui.common import menu_bar
 from configuration.configurations import Configuration
+from configuration.database_writer import DatabaseWriter
 
 
 class ConfigurationsWindow(object):
@@ -313,7 +314,15 @@ class ConfigurationsWindow(object):
         self.numOfConnectionsLabel.setText(insert("configurationsWindow", "No. of estrablished connections:"))
         self.connectBttn.setText(insert("configurationsWindow", "Connect"))
         self.connectBttn.clicked.connect(lambda: configuration.set_team(self.leadCheckbox.isChecked(), self.leadIPAddr.text(), self.numOfConnections.text()))
-        self.numOfConnections.setText(insert("configurationsWindow", "5"))  
+        self.numOfConnections.setText(insert("configurationsWindow", "5"))
+
+        team_collection = DatabaseWriter.get_all_documents_in_collection(DatabaseWriter.COLLECTION_TEAM)
+        if len(team_collection) != 0:
+            team_doc = team_collection[0]
+            self.leadCheckbox.setChecked(team_doc["isLead"])
+            self.numOfConnections.setText(team_doc["established_connections"])
+            self.leadIPAddr.setText(team_doc["lead_IP"])
+
 #*--------------------------Event Configuration Tab--------------------------------------------------*#
         self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.EventConfigurationTab), insert("configurationsWindow", "Event Configuration"))
         #Set labels & buttons
@@ -323,6 +332,14 @@ class ConfigurationsWindow(object):
         self.eventEndLabel.setText(insert("configurationsWindow", "Event End Timestamp:"))
         self.saveEventBttn.setText(insert("configurationsWindow", "Save Event"))
         self.saveEventBttn.clicked.connect(lambda: configuration.set_event(self.eventName.text(), self.eventDesc.toPlainText(), self.eventStart.text(), self.eventEnd.text()))
+
+        event_collection = DatabaseWriter.get_all_documents_in_collection(DatabaseWriter.COLLECTION_EVENT)
+        if len(event_collection) != 0:
+            event_doc = event_collection[0]
+            self.eventName.setText(event_doc["event_name"])
+            self.eventDesc.setText(event_doc["event_description"])
+            # TODO get date from saved state
+
 #*--------------------------Directory Configuration Tab--------------------------------------------------*#
         self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.DirectoryConfigurationTab), insert("configurationsWindow", "Directory Configuration"))
         #Set Labels & buttons
@@ -343,7 +360,15 @@ class ConfigurationsWindow(object):
         self.searchWTFbttn.clicked.connect(lambda: self.open_directory_dialog_box(self.whiteTeamFolder))
 
         self.startDataIngestionBttn.clicked.connect(lambda: configuration.set_directories(self.rootDirectory.text(), self.redTeamFolder.text(), self.blueTeamFolder.text(), self.whiteTeamFolder.text()))
-        
+
+
+        directory_collection = DatabaseWriter.get_all_documents_in_collection(DatabaseWriter.COLLECTION_DIRECTORY)
+        if len(directory_collection) != 0:
+            directory_doc = directory_collection[0]
+            self.rootDirectory.setText(directory_doc["root_directory"])
+            self.redTeamFolder.setText(directory_doc["red_directory"])
+            self.blueTeamFolder.setText(directory_doc["blue_directory"])
+            self.whiteTeamFolder.setText(directory_doc["white_directory"])
 #*--------------------------Vector Configuration Tab--------------------------------------------------*#
         self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.VectorConfigurationTab), insert("configurationsWindow", "Vector Configuration"))
         #Set labels, buttons & headers

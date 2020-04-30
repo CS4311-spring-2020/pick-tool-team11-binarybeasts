@@ -35,7 +35,12 @@ class Configuration:
 
         self.icons = []
 
+        directories = DatabaseWriter.get_all_documents_in_collection(DatabaseWriter.COLLECTION_DIRECTORY)
+        document = directories[0]
         self.splunk = None
+        if len(directories) != 0:
+            self.splunk = Splunk(document["root_directory"], document["red_directory"], document["blue_directory"], document["white_directory"])
+            self.splunk.connect()
 
         Configuration.__instance = self
 

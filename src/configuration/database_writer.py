@@ -27,6 +27,10 @@ class DatabaseWriter:
         collection.insert_one(dict_to_write)
 
     @staticmethod
+    def get_all_documents_in_collection(collection_name):
+        return [document for document in DatabaseWriter.connect_to_database()[collection_name].find()]
+
+    @staticmethod
     def print_collection(collection_name):
         print("Documents in " + collection_name + " collection:")
         for document in DatabaseWriter.connect_to_database()[collection_name].find():

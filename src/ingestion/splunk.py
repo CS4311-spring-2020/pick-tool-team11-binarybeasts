@@ -51,8 +51,9 @@ class Splunk:
         return self
 
     def ingest_files(self, directory_files):
-        for filepath in directory_files:
-            self.index.upload(filepath)
+        if directory_files != "":
+            for filepath in directory_files:
+                self.index.upload(filepath)
 
     def get_log_entries(self):
         # Run an export search and display the results using the results reader.
