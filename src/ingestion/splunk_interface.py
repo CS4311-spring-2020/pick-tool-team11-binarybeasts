@@ -3,7 +3,7 @@ import splunklib.results as results
 from ingestion.logentry import LogEntry
 
 
-class Splunk:
+class SplunkInterface:
 
     def __init__(self, root_files, red_files, blue_files, white_files):
         self.root_files = root_files

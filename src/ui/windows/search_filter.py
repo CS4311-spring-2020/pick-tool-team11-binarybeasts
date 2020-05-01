@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QMessageBox
 from ui.common import menu_bar
 from configuration.configurations import Configuration
 from threading import Thread
-from ingestion.splunk import Splunk
+from ingestion.splunk_interface import SplunkInterface
 
 
 class FilterUi(object):

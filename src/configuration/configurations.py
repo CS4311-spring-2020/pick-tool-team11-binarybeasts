@@ -1,7 +1,7 @@
 import os
 from association.vector import Vector
 from configuration.icon import Icon
-from ingestion.splunk import Splunk
+from ingestion.splunk_interface import SplunkInterface
 from threading import Thread
 from configuration.database_writer import DatabaseWriter
 
@@ -39,7 +39,7 @@ class Configuration:
         document = directories[0]
         self.splunk = None
         if len(directories) != 0:
-            self.splunk = Splunk(document["root_directory"], document["red_directory"], document["blue_directory"], document["white_directory"])
+            self.splunk = SplunkInterface(document["root_directory"], document["red_directory"], document["blue_directory"], document["white_directory"])
             self.splunk.connect()
 
         Configuration.__instance = self
@@ -84,7 +84,7 @@ class Configuration:
         DatabaseWriter.write_dict_to_collection(self.get_directories_dict(), DatabaseWriter.COLLECTION_DIRECTORY)
         DatabaseWriter.print_collection(DatabaseWriter.COLLECTION_DIRECTORY)
 
-        self.splunk = Splunk(self.root_files, self.red_files, self.blue_files, self.white_files)
+        self.splunk = SplunkInterface(self.root_files, self.red_files, self.blue_files, self.white_files)
         self.splunk.connect()
         Thread(target=self.splunk.start_ingestion).start()
 

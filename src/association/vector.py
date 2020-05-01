@@ -20,12 +20,3 @@ class Vector:
                                  "source_file": log_entry.source_file,
                                  "source_type": log_entry.source_type}
                                 for log_entry in self.log_entries]}
-
-
-
-
-
-
-vector = Vector("testName", "testDescription")
-vector.add_log_entry(LogEntry("testid", "testdata", "testtime", "testsourceIndex", "testSourceFile", "testSourceType"))
-print(vector.get_dict())
