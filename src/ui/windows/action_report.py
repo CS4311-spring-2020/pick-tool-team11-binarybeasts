@@ -1,5 +1,10 @@
+import sys
 from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtWidgets import QMessageBox
 from ui.common import menu_bar
+from configuration.configurations import Configuration
+from threading import Thread
+from ingestion.splunk import Splunk
 
 
 class ActionReportWindow(object):
@@ -85,8 +90,7 @@ class ActionReportWindow(object):
         self.cancelButton = QtWidgets.QPushButton(self.windowBackground)
         self.cancelButton.setObjectName("cancelButton")
         self.verticalLayout.addWidget(self.cancelButton)
-        
-
+    
 
         actionReportWindow.setCentralWidget(self.windowBackground)
         # this is creating the menu bar options
@@ -126,27 +130,28 @@ class ActionReportWindow(object):
         __sortingEnabled = self.reportTable.isSortingEnabled()
         self.reportTable.setSortingEnabled(False)
         # Filling in the table contents 
-        self.reportTable.topLevelItem(0).setText(0, insert("actionReportWindow", "Log File 1"))
-        self.reportTable.topLevelItem(0).setText(1, insert("actionReportWindow", "/path/observer_notes.osv"))
-        self.reportTable.topLevelItem(0).setText(2, insert("actionReportWindow", "+"))
-        self.reportTable.topLevelItem(0).setText(3, insert("actionReportWindow", "+"))
-        self.reportTable.topLevelItem(0).setText(4, insert("actionReportWindow", "+"))
-        self.reportTable.topLevelItem(1).setText(0, insert("actionReportWindow", "Log File 2"))
-        self.reportTable.topLevelItem(1).setText(1, insert("actionReportWindow", "/path/incident_report.pd"))
-        self.reportTable.topLevelItem(1).setText(2, insert("actionReportWindow", "+"))
-        self.reportTable.topLevelItem(1).setText(3, insert("actionReportWindow", "-"))
-        self.reportTable.topLevelItem(1).setText(4, insert("actionReportWindow", "-"))
-        self.reportTable.topLevelItem(2).setText(0, insert("actionReportWindow", "Log File 3"))
-        self.reportTable.topLevelItem(2).setText(1, insert("actionReportWindow", "/path/observer_notes.osv"))
-        self.reportTable.topLevelItem(2).setText(2, insert("actionReportWindow", "+"))
-        self.reportTable.topLevelItem(2).setText(3, insert("actionReportWindow", "+"))
-        self.reportTable.topLevelItem(2).setText(4, insert("actionReportWindow", "+"))
-        self.reportTable.topLevelItem(3).setText(0, insert("actionReportWindow", "Log File 4"))
-        self.reportTable.topLevelItem(3).setText(1, insert("actionReportWindow", "/path/incident_report.pd"))
-        self.reportTable.topLevelItem(3).setText(2, insert("actionReportWindow", "-"))
-        self.reportTable.topLevelItem(3).setText(3, insert("actionReportWindow", "-"))
-        self.reportTable.topLevelItem(3).setText(4, insert("actionReportWindow", "-"))
-        self.reportTable.setSortingEnabled(__sortingEnabled)
+
+        #self.reportTable.topLevelItem(0).setText(0, insert("actionReportWindow", log_entries[i].logs))
+        #self.reportTable.topLevelItem(0).setText(1, insert("actionReportWindow", log_entries[i].source_file))
+        #self.reportTable.topLevelItem(0).setText(2, insert("actionReportWindow", "+"))
+        #self.reportTable.topLevelItem(0).setText(3, insert("actionReportWindow", "+"))
+        #self.reportTable.topLevelItem(0).setText(4, insert("actionReportWindow", "+"))
+        #self.reportTable.topLevelItem(1).setText(0, insert("actionReportWindow", "Log File 2"))
+        #self.reportTable.topLevelItem(1).setText(1, insert("actionReportWindow", "/path/incident_report.pd"))
+        #self.reportTable.topLevelItem(1).setText(2, insert("actionReportWindow", "+"))
+        #self.reportTable.topLevelItem(1).setText(3, insert("actionReportWindow", "-"))
+        #self.reportTable.topLevelItem(1).setText(4, insert("actionReportWindow", "-"))
+        #self.reportTable.topLevelItem(2).setText(0, insert("actionReportWindow", "Log File 3"))
+        #self.reportTable.topLevelItem(2).setText(1, insert("actionReportWindow", "/path/observer_notes.osv"))
+        #self.reportTable.topLevelItem(2).setText(2, insert("actionReportWindow", "+"))
+        #self.reportTable.topLevelItem(2).setText(3, insert("actionReportWindow", "+"))
+        #self.reportTable.topLevelItem(2).setText(4, insert("actionReportWindow", "+"))
+        #self.reportTable.topLevelItem(3).setText(0, insert("actionReportWindow", "Log File 4"))
+        #self.reportTable.topLevelItem(3).setText(1, insert("actionReportWindow", "/path/incident_report.pd"))
+        #self.reportTable.topLevelItem(3).setText(2, insert("actionReportWindow", "-"))
+        #self.reportTable.topLevelItem(3).setText(3, insert("actionReportWindow", "-"))
+        #self.reportTable.topLevelItem(3).setText(4, insert("actionReportWindow", "-"))
+        #self.reportTable.setSortingEnabled(__sortingEnabled)
 
         # hardcoding the error description title
         self.selectedLogFile.setTitle(insert("actionReportWindow", "Log File 2"))
@@ -171,7 +176,22 @@ class ActionReportWindow(object):
         # adding data to the buttons. (Filling them in)
         self.cancelButton.setText(insert("actionReportWindow", "Cancel Selected Log File"))
         self.validateButton.setText(insert("actionReportWindow", "Validate Selected Log File"))
+    
+    def get_log_entries_thread(self, configuration):
+        if configuration.splunk:
+            all_log_entries = configuration.splunk.get_log_entries()
+            self.insert_log_entry_search_data(all_log_entries)
 
+    def insert_log_entry_search_data(self, log_entries):
+        insert = QtCore.QCoreApplication.translate
+
+        for i in range(len(log_entries)):
+            QtWidgets.QTreeWidgetItem(self.filterView)
+
+        # adding the actual data to action report
+        for i in range(len(log_entries)):
+            self.reportTable.topLevelItem(0).setText(0, insert("actionReportWindow", log_entries[i].logs))
+            self.reportTable.topLevelItem(0).setText(1, insert("actionReportWindow", log_entries[i].source_file))
 
 if __name__ == "__main__":
     import sys
