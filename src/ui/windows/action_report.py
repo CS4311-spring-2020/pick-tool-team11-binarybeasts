@@ -198,14 +198,13 @@ class ActionReportWindow(object):
         for i in range(len(log_entries)):
             self.reportTable.topLevelItem(i).setText(0, insert("actionReportWindow", log_entries[i].id))            
             self.reportTable.topLevelItem(i).setText(1, insert("actionReportWindow", log_entries[i].source_file))
+            self.reportTable.topLevelItem(i).setText(2, insert("actionReportWindow", "+"))
+            self.reportTable.topLevelItem(i).setText(3, insert("actionReportWindow", "-"))
+            self.reportTable.topLevelItem(i).setText(4, insert("actionReportWindow", "-"))
 
         # fills in the error description
             self.errorDescription.topLevelItem(i).setText(0, insert("actionReportWindow", log_entries[i].id))
             self.errorDescription.topLevelItem(i).setText(1, insert("actionReportWindow", log_entries[i].data))
-    #def insert_log_entry_vector_view(self, vector):
-        # Add spaced for sample data in the vector tree widget
- #       for i in range(10):
-  #          QtWidgets.QTreeWidgetItem(self.vectorView)
 
 if __name__ == "__main__":
     import sys
