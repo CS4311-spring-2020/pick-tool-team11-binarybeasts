@@ -14,6 +14,8 @@ from QGraphViz.DotParser.Node import Node
 from QGraphViz.DotParser.Edge import Edge
 from QGraphViz.Engines import Dot
 
+from configuration.configurations import Configuration
+
 
 class GraphWindow(object):
     def setupUi(self, graphWindow):
@@ -25,6 +27,8 @@ class GraphWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName("gridLayout")
+
+        self.configuration = Configuration.get_instance()
 
         #*-----------------------vector selection objects------------------------------------------------*#
 
@@ -262,6 +266,7 @@ class GraphWindow(object):
 
         def add_node():
 
+
             #add node dialog
             addNodeDialog = QDialog()
             addNodeDialog.ok=False
@@ -294,14 +299,19 @@ class GraphWindow(object):
             cbxLogCreator = QComboBox()
             leLogEntrySource = QLineEdit()
             cbxNodeType = QComboBox()
-            leImagePath = QLineEdit()
+            cbxImage = QComboBox()
 
             #buttons
             pbOK = QPushButton()
             pbCancel = QPushButton()
 
+
             cbxNodeType.addItems(["None","circle","box"])
             cbxLogCreator.addItems(["None","Red","Blue", "White"])
+            cbxImage.addItem("None")
+            self.iconList = Configuration.get_list_of_icon_dicts(self.configuration)
+            for icon in self.iconList:
+                cbxImage.addItem(icon["name"])
             pbOK.setText("&OK")
             pbCancel.setText("&Cancel")
 
@@ -322,7 +332,7 @@ class GraphWindow(object):
             addNodeLayout.setWidget(6, QFormLayout.LabelRole, QLabel("Node Type"))
             addNodeLayout.setWidget(6, QFormLayout.FieldRole, cbxNodeType)
             addNodeLayout.setWidget(7, QFormLayout.LabelRole, QLabel("Node Image"))
-            addNodeLayout.setWidget(7, QFormLayout.FieldRole, leImagePath)
+            addNodeLayout.setWidget(7, QFormLayout.FieldRole, cbxImage)
 
             #ok button handler
             def ok():
@@ -334,8 +344,10 @@ class GraphWindow(object):
                 addNodeDialog.node_logEntryReference = leLogEntryReference.text()
                 addNodeDialog.node_logCreator= cbxLogCreator.currentText()
                 addNodeDialog.node_logEntrySource= leLogEntrySource.text()
-                if(leImagePath.text()): 
-                    addNodeDialog.node_type = "ui/windows/" + leImagePath.text() + ".png"
+                if(cbxImage.currentText()): 
+                    for icon in self.iconList:
+                        if(cbxImage.currentText() == icon["name"]):
+                            addNodeDialog.node_type = icon["source"]
                 else: 
                     addNodeDialog.node_type = cbxNodeType.currentText()
                 addNodeDialog.close()

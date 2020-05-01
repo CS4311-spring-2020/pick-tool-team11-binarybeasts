@@ -104,7 +104,7 @@ class Configuration:
 
     def add_icon(self, name, source):
         new_icon = Icon(name, source)
-        self.vectors.append(new_icon)
+        self.icons.append(new_icon)
 
     def get_team_dict(self):
         return {"isLead": self.is_lead,

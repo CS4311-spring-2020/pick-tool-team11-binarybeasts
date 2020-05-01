@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from ui.common import menu_bar
 from configuration.configurations import Configuration
 from configuration.database_writer import DatabaseWriter
+from configuration.icon import Icon
 
 
 class ConfigurationsWindow(object):
@@ -283,9 +284,7 @@ class ConfigurationsWindow(object):
         self.iconTable.header().setSortIndicatorShown(True)
         self.gridLayout_6.addWidget(self.iconTable, 4, 0, 1, 4)
 
-        #creating space withing vector table to add data later
-        for i in range(1):
-            QtWidgets.QTreeWidgetItem(self.iconTable)
+        
 
 
         #Delete Icon Button
@@ -302,7 +301,7 @@ class ConfigurationsWindow(object):
         QtCore.QMetaObject.connectSlotsByName(configurationsWindow)
 
     def addData(self, configurationsWindow):
-        configuration = Configuration.get_instance()
+        self.configuration = Configuration.get_instance()
 
         insert = QtCore.QCoreApplication.translate
         configurationsWindow.setWindowTitle(insert("configurationsWindow", "Configurations"))
@@ -400,6 +399,7 @@ class ConfigurationsWindow(object):
         
         self.addIconBttn.setText(insert("configurationsWindow", "Add Icon"))
         self.addIconBttn.clicked.connect(lambda: self.addTreeData(self.iconTable, self.iconName.text(), self.iconSource.text()))
+        self.addIconBttn.clicked.connect(lambda: Configuration.add_icon(self.configuration, self.iconName.text(), self.iconSource.text()))
         self.addIconBttn.clicked.connect(lambda: self.clearData(self.iconTable, self.iconName, self.iconSource))
         
         self.iconNameLabel.setText(insert("configurationsWindow", "Icon Name: "))
@@ -412,8 +412,6 @@ class ConfigurationsWindow(object):
         self.iconTable.headerItem().setText(1, insert("configurationsWindow", "Icon Source"))
         __sortingEnabled = self.iconTable.isSortingEnabled()
         self.iconTable.setSortingEnabled(False)
-        self.iconTable.topLevelItem(0).setText(0, insert("configurationsWindow", "Icon 1"))
-        self.iconTable.topLevelItem(0).setText(1, insert("configurationsWindow", "pick-tool-team11-binarybeasts/src/ui/windows/pick.png"))
         self.iconTable.setSortingEnabled(__sortingEnabled)
         self.iconSourceLabel.setText(insert("configurationsWindow", "Icon Source: "))
         self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.IconConfigurationTab), insert("configurationsWindow", "Icon Configuration"))
