@@ -133,9 +133,9 @@ class ActionReportWindow(object):
 
         #self.reportTable.topLevelItem(0).setText(0, insert("actionReportWindow", log_entries[i].logs))
         #self.reportTable.topLevelItem(0).setText(1, insert("actionReportWindow", log_entries[i].source_file))
-        #self.reportTable.topLevelItem(0).setText(2, insert("actionReportWindow", "+"))
-        #self.reportTable.topLevelItem(0).setText(3, insert("actionReportWindow", "+"))
-        #self.reportTable.topLevelItem(0).setText(4, insert("actionReportWindow", "+"))
+        self.reportTable.topLevelItem(0).setText(2, insert("actionReportWindow", "+"))
+        self.reportTable.topLevelItem(0).setText(3, insert("actionReportWindow", "+"))
+        self.reportTable.topLevelItem(0).setText(4, insert("actionReportWindow", "+"))
         #self.reportTable.topLevelItem(1).setText(0, insert("actionReportWindow", "Log File 2"))
         #self.reportTable.topLevelItem(1).setText(1, insert("actionReportWindow", "/path/incident_report.pd"))
         #self.reportTable.topLevelItem(1).setText(2, insert("actionReportWindow", "+"))
@@ -176,7 +176,12 @@ class ActionReportWindow(object):
         # adding data to the buttons. (Filling them in)
         self.cancelButton.setText(insert("actionReportWindow", "Cancel Selected Log File"))
         self.validateButton.setText(insert("actionReportWindow", "Validate Selected Log File"))
-    
+
+        configuration = Configuration.get_instance()
+        if configuration.splunk != None:
+            all_log_entries = configuration.splunk.get_log_entries()
+            self.insert_log_entry_search_data(all_log_entries)    
+
     def get_log_entries_thread(self, configuration):
         if configuration.splunk:
             all_log_entries = configuration.splunk.get_log_entries()
@@ -184,14 +189,23 @@ class ActionReportWindow(object):
 
     def insert_log_entry_search_data(self, log_entries):
         insert = QtCore.QCoreApplication.translate
-
+        # makes it display all of the log files by using (i) inside the topLevelItem.
         for i in range(len(log_entries)):
-            QtWidgets.QTreeWidgetItem(self.filterView)
+            QtWidgets.QTreeWidgetItem(self.reportTable)
+            QtWidgets.QTreeWidgetItem(self.errorDescription)
 
         # adding the actual data to action report
         for i in range(len(log_entries)):
-            self.reportTable.topLevelItem(0).setText(0, insert("actionReportWindow", log_entries[i].logs))
-            self.reportTable.topLevelItem(0).setText(1, insert("actionReportWindow", log_entries[i].source_file))
+            self.reportTable.topLevelItem(i).setText(0, insert("actionReportWindow", log_entries[i].id))            
+            self.reportTable.topLevelItem(i).setText(1, insert("actionReportWindow", log_entries[i].source_file))
+
+        # fills in the error description
+            self.errorDescription.topLevelItem(i).setText(0, insert("actionReportWindow", log_entries[i].id))
+            self.errorDescription.topLevelItem(i).setText(1, insert("actionReportWindow", log_entries[i].data))
+    #def insert_log_entry_vector_view(self, vector):
+        # Add spaced for sample data in the vector tree widget
+ #       for i in range(10):
+  #          QtWidgets.QTreeWidgetItem(self.vectorView)
 
 if __name__ == "__main__":
     import sys
