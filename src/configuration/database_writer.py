@@ -25,6 +25,16 @@ class DatabaseWriter:
                 collection_name == DatabaseWriter.COLLECTION_DIRECTORY):
             collection.delete_many({})
         collection.insert_one(dict_to_write)
+        print("After write of " + str(dict_to_write) + " in collection " + str(collection_name) + "...")
+        DatabaseWriter.print_collection(collection_name)
+
+    @staticmethod
+    def delete_one_from_collection(query, collection_name):
+        database = DatabaseWriter.connect_to_database()
+        collection = database[collection_name]
+        collection.delete_one(query)
+        print("After deletion query "+ str(query) + " in collection " + str(collection_name) + "...")
+        DatabaseWriter.print_collection(collection_name)
 
     @staticmethod
     def get_all_documents_in_collection(collection_name):

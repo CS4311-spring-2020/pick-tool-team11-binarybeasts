@@ -7,12 +7,11 @@ from configuration.database_writer import DatabaseWriter
 
 
 class Configuration:
-
     __instance = None
 
     @staticmethod
     def get_instance():
-        if Configuration.__instance == None:
+        if Configuration.__instance is None:
             Configuration.__instance = Configuration()
         return Configuration.__instance
 
@@ -39,7 +38,8 @@ class Configuration:
         self.splunk = None
         if len(directories) != 0:
             document = directories[0]
-            self.splunk = SplunkInterface(document["root_directory"], document["red_directory"], document["blue_directory"], document["white_directory"])
+            self.splunk = SplunkInterface(document["root_directory"], document["red_directory"],
+                                          document["blue_directory"], document["white_directory"])
             self.splunk.connect()
 
         Configuration.__instance = self
@@ -101,23 +101,26 @@ class Configuration:
     def add_vector(self, name, description):
         new_vector = Vector(name, description)
         self.vectors.append(new_vector)
+        DatabaseWriter.write_dict_to_collection(new_vector.get_dict(), DatabaseWriter.COLLECTION_VECTOR)
 
     def delete_vector(self, vectorName):
-        for i in range(len(self.vectors)): 
-            if self.vectors[i].name == vectorName: 
-                del self.vectors[i] 
+        for i in range(len(self.vectors)):
+            if self.vectors[i].name == vectorName:
+                del self.vectors[i]
+                DatabaseWriter.delete_one_from_collection({"name": vectorName}, DatabaseWriter.COLLECTION_VECTOR)
                 break
 
     def add_icon(self, name, source):
         new_icon = Icon(name, source)
         self.icons.append(new_icon)
+        DatabaseWriter.write_dict_to_collection(new_icon.get_dict(), DatabaseWriter.COLLECTION_VECTOR)
 
     def delete_icon(self, iconName):
-        for i in range(len(self.icons)): 
-            if self.icons[i].name == iconName: 
-                del self.icons[i] 
+        for i in range(len(self.icons)):
+            if self.icons[i].name == iconName:
+                del self.icons[i]
+                DatabaseWriter.delete_one_from_collection({"name": iconName}, DatabaseWriter.COLLECTION_ICON)
                 break
-
 
     def get_team_dict(self):
         return {"isLead": self.is_lead,

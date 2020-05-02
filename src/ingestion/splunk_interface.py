@@ -12,8 +12,6 @@ class SplunkInterface:
         self.white_files = white_files
 
     def connect(self):
-        print("Starting Splunk Ingestion..")
-
         HOST = "localhost"
         PORT = 8089
         USERNAME = "binarybeasts101"
