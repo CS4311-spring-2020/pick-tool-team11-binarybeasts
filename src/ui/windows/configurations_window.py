@@ -311,7 +311,7 @@ class ConfigurationsWindow(object):
 
         self.leadCheckbox.setChecked(self.configuration.is_lead)
         self.leadIPAddr.setText(self.configuration.lead_IP)
-        self.numOfConnections.setText(insert("configurationsWindow", str(self.configuration.established_connections)))
+        self.numOfConnections.setText(str(self.configuration.established_connections))
 
 #*--------------------------Event Configuration Tab--------------------------------------------------*#
         self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.EventConfigurationTab), insert("configurationsWindow", "Event Configuration"))
