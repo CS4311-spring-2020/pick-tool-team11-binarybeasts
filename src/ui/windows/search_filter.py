@@ -13,6 +13,8 @@ class FilterUi(object):
         SearchFilterWindow.setObjectName("SearchFilterWindow")
         SearchFilterWindow.resize(870, 690)
 
+        self.configuration = Configuration.get_instance()
+
         # Create layouts in this window
         self.mainVerticalView = QtWidgets.QWidget(SearchFilterWindow)
         self.mainVerticalView.setObjectName("mainVerticalView")
@@ -110,11 +112,12 @@ class FilterUi(object):
         self.vectorSelectButtonLayout.setObjectName("vectorSelectButtonLayout")
         self.vectorSelectCombo = QtWidgets.QComboBox(self.vectorViewLayout)
         self.vectorSelectCombo.setObjectName("vectorSelectCombo")
-        self.vectorSelectCombo.addItem("")
-        self.vectorSelectCombo.addItem("")
-        self.vectorSelectCombo.addItem("")
-        self.vectorSelectCombo.addItem("")
-        self.vectorSelectCombo.addItem("")
+        
+        self.vectorSelectCombo.addItem("None")
+        self.vectorList = Configuration.get_list_of_vector_dicts(self.configuration)
+        for vector in self.vectorList:
+            self.vectorSelectCombo.addItem(vector["name"])
+
         self.vectorSelectButtonLayout.addWidget(self.vectorSelectCombo)
         self.vectorSelectConfirmButton = QtWidgets.QPushButton(self.vectorViewLayout)
         self.vectorSelectConfirmButton.setCheckable(False)
@@ -189,11 +192,6 @@ class FilterUi(object):
         self.vectorViewLayout.setTitle(insert("SearchFilterWindow", "Vector View"))
 
         # Add sample options to vector select combo box
-        self.vectorSelectCombo.setItemText(0, insert("SearchFilterWindow", "Vector A"))
-        self.vectorSelectCombo.setItemText(1, insert("SearchFilterWindow", "Vector B"))
-        self.vectorSelectCombo.setItemText(2, insert("SearchFilterWindow", "Vector C"))
-        self.vectorSelectCombo.setItemText(3, insert("SearchFilterWindow", "Vector D"))
-        self.vectorSelectCombo.setItemText(4, insert("SearchFilterWindow", "Vector E"))
         self.vectorSelectConfirmButton.setText(insert("SearchFilterWindow", "Select Vector"))
 
         # Add labels to vector view
