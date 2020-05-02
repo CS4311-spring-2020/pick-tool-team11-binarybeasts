@@ -102,9 +102,22 @@ class Configuration:
         new_vector = Vector(name, description)
         self.vectors.append(new_vector)
 
+    def delete_vector(self, vectorName):
+        for i in range(len(self.vectors)): 
+            if self.vectors[i].name == vectorName: 
+                del self.vectors[i] 
+                break
+
     def add_icon(self, name, source):
         new_icon = Icon(name, source)
         self.icons.append(new_icon)
+
+    def delete_icon(self, iconName):
+        for i in range(len(self.icons)): 
+            if self.icons[i].name == iconName: 
+                del self.icons[i] 
+                break
+
 
     def get_team_dict(self):
         return {"isLead": self.is_lead,

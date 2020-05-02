@@ -58,10 +58,12 @@ class GraphWindow(object):
         self.comboBoxVector.setMinimumSize(QtCore.QSize(150, 0))
         self.comboBoxVector.setMaximumSize(QtCore.QSize(69, 16777215))
         self.comboBoxVector.setObjectName("comboBoxVector")
-        vectors = 3
-        for vector in range(vectors):
-            self.comboBoxVector.addItem("")
         self.formLayoutVector.addWidget(self.comboBoxVector)
+
+        self.comboBoxVector.addItem("None")
+        self.vectorList = Configuration.get_list_of_vector_dicts(self.configuration)
+        for vector in self.vectorList:
+            self.comboBoxVector.addItem(vector["name"])
 
         #vector description label
         self.labelVectorDesc = QtWidgets.QLabel(self.groupBoxVectorSelection)
@@ -80,8 +82,11 @@ class GraphWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lineEditVectorDesc.sizePolicy().hasHeightForWidth())
         self.lineEditVectorDesc.setSizePolicy(sizePolicy)
+        self.lineEditVectorDesc.setReadOnly(True)
         self.lineEditVectorDesc.setObjectName("lineEditVectorDesc")
         self.formLayoutVector.addWidget(self.lineEditVectorDesc)
+        self.comboBoxVector.currentTextChanged.connect(lambda: self.changeVector())
+
 
         #*----------------------multi-document-area---------------------------------------------------------------*#
         self.mdiArea = QtWidgets.QMdiArea(self.centralwidget)
@@ -788,10 +793,6 @@ class GraphWindow(object):
 
         self.groupBoxVectorSelection.setTitle(insert("graphWindow", "Vector Selection"))
         self.labelVector.setText(insert("graphWindow", "Vector:"))
-        self.comboBoxVector.setItemText(0, insert("graphWindow", "Selec A Vector"))
-        self.comboBoxVector.setItemText(1, insert("graphWindow", "Vector A"))
-        self.comboBoxVector.setItemText(2, insert("graphWindow", "Vector B"))
-        self.comboBoxVector.setItemText(3, insert("graphWindow", "Vector C"))
         self.labelVectorDesc.setText(insert("graphWindow", "Vector Description"))
 
         #*-------------------------Graph Subwindow------------------------------------------------------------------*#
@@ -951,6 +952,12 @@ class GraphWindow(object):
         self.qgv.saveAsJson(fname)
         
         self.mdiArea.setActiveSubWindow(self.graphSubWin)
+
+    def changeVector(self):
+        for vector in self.vectorList:
+            if (vector["name"] == self.comboBoxVector.currentText()):
+                self.lineEditVectorDesc.setText(vector["description"])
+
 
 
 if __name__ == "__main__":

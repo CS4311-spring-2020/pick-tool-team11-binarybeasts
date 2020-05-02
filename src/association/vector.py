@@ -11,7 +11,7 @@ class Vector:
         self.log_entries.append(log_entry)
 
     def get_dict(self):
-        return {"_id": self.name,
+        return {"name": self.name,
                 "description": self.description,
                 'log_entries': [{"_id": log_entry.id,
                                  "data": log_entry.data,

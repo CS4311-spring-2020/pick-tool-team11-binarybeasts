@@ -227,10 +227,6 @@ class ConfigurationsWindow(object):
         self.vectorTable.header().setSortIndicatorShown(True)
         self.gridLayout_4.addWidget(self.vectorTable, 4, 0, 1, 2)
 
-        #creating space withing vector table to add data later
-        for i in range(1):
-            QtWidgets.QTreeWidgetItem(self.vectorTable)
-
         #Delete vector button
         self.deleteVectorBttn = QtWidgets.QPushButton(self.VectorConfigurationTab)
         self.deleteVectorBttn.setObjectName("deleteVectorBttn")
@@ -376,10 +372,11 @@ class ConfigurationsWindow(object):
 
         self.addVectorBttn.setText(insert("configurationsWindow", "Add Vector"))
         self.addVectorBttn.clicked.connect(lambda: self.addTreeData(self.vectorTable, self.vectorName.text(), self.vectorDesc.toPlainText()))
+        self.addVectorBttn.clicked.connect(lambda: Configuration.add_vector(self.configuration, self.vectorName.text(), self.vectorDesc.toPlainText()))
         self.addVectorBttn.clicked.connect(lambda: self.clearData(self.iconTable, self.vectorName, self.vectorDesc))
 
         self.deleteVectorBttn.setText(insert("configurationsWindow", "Delete Vector"))
-        self.deleteVectorBttn.clicked.connect(lambda: self.removeTreeData(self.vectorTable))
+        self.deleteVectorBttn.clicked.connect(lambda: self.removeVectorData(self.vectorTable))
 
 
         self.vectorTable.setSortingEnabled(True)
@@ -387,15 +384,17 @@ class ConfigurationsWindow(object):
         self.vectorTable.headerItem().setText(1, insert("configurationsWindow", "Vector Description"))
         __sortingEnabled = self.vectorTable.isSortingEnabled()
         self.vectorTable.setSortingEnabled(False)
-
-        #set vector table data
-        self.vectorTable.topLevelItem(0).setText(0, insert("configurationsWindow", "Vector A"))
-        self.vectorTable.topLevelItem(0).setText(1, insert("configurationsWindow", "Testing Vector A"))
         self.vectorTable.setSortingEnabled(__sortingEnabled)
+
+        self.vectorList = Configuration.get_list_of_vector_dicts(self.configuration)
+        #always check iconList to make sure it populates the iconTable with existing icons
+        if (len(self.vectorList) != 0):
+            for vector in self.vectorList:
+                self.addTreeData(self.vectorTable, vector["name"], vector["description"])
 
 #*--------------------------Icon Configuration Tab--------------------------------------------------*#
         self.deleteIconBttn.setText(insert("configurationsWindow", "Delete Icon"))
-        self.deleteIconBttn.clicked.connect(lambda: self.removeTreeData(self.iconTable))
+        self.deleteIconBttn.clicked.connect(lambda: self.removeIconData(self.iconTable))
         
         self.addIconBttn.setText(insert("configurationsWindow", "Add Icon"))
         self.addIconBttn.clicked.connect(lambda: self.addTreeData(self.iconTable, self.iconName.text(), self.iconSource.text()))
@@ -416,6 +415,12 @@ class ConfigurationsWindow(object):
         self.iconSourceLabel.setText(insert("configurationsWindow", "Icon Source: "))
         self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.IconConfigurationTab), insert("configurationsWindow", "Icon Configuration"))
 
+        self.iconList = Configuration.get_list_of_icon_dicts(self.configuration)
+        #always check iconList to make sure it populates the iconTable with existing icons
+        if (len(self.iconList) != 0):
+            for icon in self.iconList:
+                self.addTreeData(self.iconTable, icon["name"], icon["source"])
+                
         
     #opens file browser
     def open_file_dialog_box(self, lineEdit):
@@ -449,12 +454,23 @@ class ConfigurationsWindow(object):
     def clearData(self, tree, col1, col2):
             col1.clear()
             col2.clear()
-    
-    #removes selected items from given tree widget
-    def removeTreeData(self, tree):
+
+
+    #remove selected items from tree widget and storage list
+    def removeIconData(self, tree):
         selectedItems = tree.selectedItems()
         for item in selectedItems:
-                tree.takeTopLevelItem(tree.indexOfTopLevelItem(item))
+            Configuration.delete_icon(self.configuration, item.text(0))
+        for item in selectedItems:
+            tree.takeTopLevelItem(tree.indexOfTopLevelItem(item))
+        
+    #remove selected items from tree widget and storage list
+    def removeVectorData(self, tree):
+        selectedItems = tree.selectedItems()
+        for item in selectedItems:
+            Configuration.delete_vector(self.configuration, item.text(0))
+        for item in selectedItems:
+            tree.takeTopLevelItem(tree.indexOfTopLevelItem(item))
 
 
 if __name__ == "__main__":
