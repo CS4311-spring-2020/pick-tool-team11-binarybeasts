@@ -1,7 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from ui.common import menu_bar
 from configuration.configurations import Configuration
-from configuration.database_writer import DatabaseWriter
 from configuration.icon import Icon
 
 
@@ -305,18 +304,14 @@ class ConfigurationsWindow(object):
         self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.TeamConfigurationTab), insert("configurationsWindow", "Team Configuration"))
         #set checkbox, labels, buttons and text fields
         self.leadCheckbox.setText(insert("configurationsWindow", "Lead"))
-        self.leadIPAddrLabel.setText(insert("configurationsWindow", "Lead IP Address:"))
+        self.leadIPAddrLabel.setText(insert("configurationsWindow", "Lead IP Address"))
         self.numOfConnectionsLabel.setText(insert("configurationsWindow", "No. of estrablished connections:"))
         self.connectBttn.setText(insert("configurationsWindow", "Connect"))
-        self.connectBttn.clicked.connect(lambda: configuration.set_team(self.leadCheckbox.isChecked(), self.leadIPAddr.text(), self.numOfConnections.text()))
-        self.numOfConnections.setText(insert("configurationsWindow", "5"))
+        self.connectBttn.clicked.connect(lambda: self.configuration.set_team(self.leadCheckbox.isChecked(), self.leadIPAddr.text(), self.numOfConnections.text()))
 
-        team_collection = DatabaseWriter.get_all_documents_in_collection(DatabaseWriter.COLLECTION_TEAM)
-        if len(team_collection) != 0:
-            team_doc = team_collection[0]
-            self.leadCheckbox.setChecked(team_doc["isLead"])
-            self.numOfConnections.setText(team_doc["established_connections"])
-            self.leadIPAddr.setText(team_doc["lead_IP"])
+        self.leadCheckbox.setChecked(self.configuration.is_lead)
+        self.leadIPAddr.setText(self.configuration.lead_IP)
+        self.numOfConnections.setText(insert("configurationsWindow", self.configuration.established_connections))
 
 #*--------------------------Event Configuration Tab--------------------------------------------------*#
         self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.EventConfigurationTab), insert("configurationsWindow", "Event Configuration"))
@@ -326,14 +321,11 @@ class ConfigurationsWindow(object):
         self.eventStartLabel.setText(insert("configurationsWindow", "Event Start Timestamp:"))
         self.eventEndLabel.setText(insert("configurationsWindow", "Event End Timestamp:"))
         self.saveEventBttn.setText(insert("configurationsWindow", "Save Event"))
-        self.saveEventBttn.clicked.connect(lambda: configuration.set_event(self.eventName.text(), self.eventDesc.toPlainText(), self.eventStart.text(), self.eventEnd.text()))
+        self.saveEventBttn.clicked.connect(lambda: self.configuration.set_event(self.eventName.text(), self.eventDesc.toPlainText(), self.eventStart.text(), self.eventEnd.text()))
 
-        event_collection = DatabaseWriter.get_all_documents_in_collection(DatabaseWriter.COLLECTION_EVENT)
-        if len(event_collection) != 0:
-            event_doc = event_collection[0]
-            self.eventName.setText(event_doc["event_name"])
-            self.eventDesc.setText(event_doc["event_description"])
-            # TODO get date from saved state
+        self.eventName.setText(self.configuration.event_name)
+        self.eventDesc.setText(self.configuration.event_description)
+        # TODO Get date
 
 #*--------------------------Directory Configuration Tab--------------------------------------------------*#
         self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.DirectoryConfigurationTab), insert("configurationsWindow", "Directory Configuration"))
@@ -354,16 +346,12 @@ class ConfigurationsWindow(object):
         self.searchWTFbttn.setIcon(QtGui.QIcon("ui/windows/directoryPicker.png"))
         self.searchWTFbttn.clicked.connect(lambda: self.open_directory_dialog_box(self.whiteTeamFolder))
 
-        self.startDataIngestionBttn.clicked.connect(lambda: configuration.set_directories(self.rootDirectory.text(), self.redTeamFolder.text(), self.blueTeamFolder.text(), self.whiteTeamFolder.text()))
+        self.startDataIngestionBttn.clicked.connect(lambda: self.configuration.set_directories(self.rootDirectory.text(), self.redTeamFolder.text(), self.blueTeamFolder.text(), self.whiteTeamFolder.text()))
 
-
-        directory_collection = DatabaseWriter.get_all_documents_in_collection(DatabaseWriter.COLLECTION_DIRECTORY)
-        if len(directory_collection) != 0:
-            directory_doc = directory_collection[0]
-            self.rootDirectory.setText(directory_doc["root_directory"])
-            self.redTeamFolder.setText(directory_doc["red_directory"])
-            self.blueTeamFolder.setText(directory_doc["blue_directory"])
-            self.whiteTeamFolder.setText(directory_doc["white_directory"])
+        self.rootDirectory.setText(self.configuration.root_directory)
+        self.redTeamFolder.setText(self.configuration.red_directory)
+        self.blueTeamFolder.setText(self.configuration.blue_directory)
+        self.whiteTeamFolder.setText(self.configuration.white_directory)
 #*--------------------------Vector Configuration Tab--------------------------------------------------*#
         self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.VectorConfigurationTab), insert("configurationsWindow", "Vector Configuration"))
         #Set labels, buttons & headers
@@ -372,7 +360,7 @@ class ConfigurationsWindow(object):
 
         self.addVectorBttn.setText(insert("configurationsWindow", "Add Vector"))
         self.addVectorBttn.clicked.connect(lambda: self.addTreeData(self.vectorTable, self.vectorName.text(), self.vectorDesc.toPlainText()))
-        self.addVectorBttn.clicked.connect(lambda: Configuration.add_vector(self.configuration, self.vectorName.text(), self.vectorDesc.toPlainText()))
+        self.addVectorBttn.clicked.connect(lambda: self.configuration.add_vector(self.vectorName.text(), self.vectorDesc.toPlainText()))
         self.addVectorBttn.clicked.connect(lambda: self.clearData(self.iconTable, self.vectorName, self.vectorDesc))
 
         self.deleteVectorBttn.setText(insert("configurationsWindow", "Delete Vector"))
@@ -386,11 +374,10 @@ class ConfigurationsWindow(object):
         self.vectorTable.setSortingEnabled(False)
         self.vectorTable.setSortingEnabled(__sortingEnabled)
 
-        self.vectorList = Configuration.get_list_of_vector_dicts(self.configuration)
+        self.vectorList = self.configuration.vectors
         #always check iconList to make sure it populates the iconTable with existing icons
-        if (len(self.vectorList) != 0):
-            for vector in self.vectorList:
-                self.addTreeData(self.vectorTable, vector["name"], vector["description"])
+        for vector in self.vectorList:
+            self.addTreeData(self.vectorTable, vector.name, vector.description)
 
 #*--------------------------Icon Configuration Tab--------------------------------------------------*#
         self.deleteIconBttn.setText(insert("configurationsWindow", "Delete Icon"))
@@ -398,7 +385,7 @@ class ConfigurationsWindow(object):
         
         self.addIconBttn.setText(insert("configurationsWindow", "Add Icon"))
         self.addIconBttn.clicked.connect(lambda: self.addTreeData(self.iconTable, self.iconName.text(), self.iconSource.text()))
-        self.addIconBttn.clicked.connect(lambda: Configuration.add_icon(self.configuration, self.iconName.text(), self.iconSource.text()))
+        self.addIconBttn.clicked.connect(lambda: self.configuration.add_icon(self.iconName.text(), self.iconSource.text()))
         self.addIconBttn.clicked.connect(lambda: self.clearData(self.iconTable, self.iconName, self.iconSource))
         
         self.iconNameLabel.setText(insert("configurationsWindow", "Icon Name: "))
@@ -415,11 +402,10 @@ class ConfigurationsWindow(object):
         self.iconSourceLabel.setText(insert("configurationsWindow", "Icon Source: "))
         self.ConfigurationTabs.setTabText(self.ConfigurationTabs.indexOf(self.IconConfigurationTab), insert("configurationsWindow", "Icon Configuration"))
 
-        self.iconList = Configuration.get_list_of_icon_dicts(self.configuration)
+        self.iconList = self.configuration.icons
         #always check iconList to make sure it populates the iconTable with existing icons
-        if (len(self.iconList) != 0):
-            for icon in self.iconList:
-                self.addTreeData(self.iconTable, icon["name"], icon["source"])
+        for icon in self.iconList:
+            self.addTreeData(self.iconTable, icon.name, icon.source)
                 
         
     #opens file browser
@@ -460,7 +446,7 @@ class ConfigurationsWindow(object):
     def removeIconData(self, tree):
         selectedItems = tree.selectedItems()
         for item in selectedItems:
-            Configuration.delete_icon(self.configuration, item.text(0))
+            self.configuration.delete_icon(item.text(0))
         for item in selectedItems:
             tree.takeTopLevelItem(tree.indexOfTopLevelItem(item))
         
@@ -468,7 +454,7 @@ class ConfigurationsWindow(object):
     def removeVectorData(self, tree):
         selectedItems = tree.selectedItems()
         for item in selectedItems:
-            Configuration.delete_vector(self.configuration, item.text(0))
+            self.configuration.delete_vector(item.text(0))
         for item in selectedItems:
             tree.takeTopLevelItem(tree.indexOfTopLevelItem(item))
 

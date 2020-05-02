@@ -4,6 +4,7 @@ from configuration.icon import Icon
 from ingestion.splunk_interface import SplunkInterface
 from threading import Thread
 from configuration.database_writer import DatabaseWriter
+from ingestion.logentry import LogEntry
 
 
 class Configuration:
@@ -31,18 +32,56 @@ class Configuration:
         self.white_directory = ""
 
         self.vectors = []
-
         self.icons = []
-
-        directories = DatabaseWriter.get_all_documents_in_collection(DatabaseWriter.COLLECTION_DIRECTORY)
         self.splunk = None
-        if len(directories) != 0:
-            document = directories[0]
+
+        self.check_database()
+
+        Configuration.__instance = self
+
+    def check_database(self):
+        lead_info = DatabaseWriter.get_all_documents_in_collection(DatabaseWriter.COLLECTION_TEAM)
+        if len(lead_info) != 0:
+            document = lead_info[0]
+            print(str(document))
+            self.is_lead = document["is_Lead"]
+            self.lead_IP = document["lead_IP"]
+            self.established_connections = document["established_connections"]
+
+        event_info = DatabaseWriter.get_all_documents_in_collection(DatabaseWriter.COLLECTION_EVENT)
+        if len(event_info) != 0:
+            document = event_info[0]
+            self.event_name = document["event_name"]
+            self.event_description = document["event_description"]
+            self.event_start = document["event_start"]
+            self.event_end = document["event_end"]
+
+        directory_info = DatabaseWriter.get_all_documents_in_collection(DatabaseWriter.COLLECTION_DIRECTORY)
+        if len(directory_info) != 0:
+            document = directory_info[0]
+            self.root_directory = document["root_directory"]
+            self.red_directory = document["red_directory"]
+            self.blue_directory = document["blue_directory"]
+            self.white_directory = document["white_directory"]
+
             self.splunk = SplunkInterface(document["root_directory"], document["red_directory"],
                                           document["blue_directory"], document["white_directory"])
             self.splunk.connect()
 
-        Configuration.__instance = self
+        vector_info = DatabaseWriter.get_all_documents_in_collection(DatabaseWriter.COLLECTION_VECTOR)
+        print(str(vector_info))
+        if len(vector_info) != 0:
+            for vector_doc in vector_info:
+                retrieved_vector = Vector(vector_doc["name"], vector_doc["description"])
+
+                for log_entry_doc in vector_doc["log_entries"]:
+                    retrieved_log = LogEntry(log_entry_doc["_id"], log_entry_doc["data"], log_entry_doc["time"], log_entry_doc["source_index"], log_entry_doc["source_file"], log_entry_doc["source_type"])
+                    retrieved_vector.add_log_entry(retrieved_log)
+                self.vectors.append(retrieved_vector)
+
+        icon_info = DatabaseWriter.get_all_documents_in_collection(DatabaseWriter.COLLECTION_ICON)
+        if len(icon_info) != 0:
+            self.icons = [Icon(icon_doc["name"], icon_doc["source"]) for icon_doc in icon_info]
 
     def set_team(self, is_Lead, lead_IP, established_connections):
         self.is_lead = is_Lead
@@ -113,7 +152,7 @@ class Configuration:
     def add_icon(self, name, source):
         new_icon = Icon(name, source)
         self.icons.append(new_icon)
-        DatabaseWriter.write_dict_to_collection(new_icon.get_dict(), DatabaseWriter.COLLECTION_VECTOR)
+        DatabaseWriter.write_dict_to_collection(new_icon.get_dict(), DatabaseWriter.COLLECTION_ICON)
 
     def delete_icon(self, iconName):
         for i in range(len(self.icons)):
@@ -123,7 +162,7 @@ class Configuration:
                 break
 
     def get_team_dict(self):
-        return {"isLead": self.is_lead,
+        return {"is_Lead": self.is_lead,
                 "lead_IP": self.lead_IP,
                 "established_connections": self.established_connections}
 
