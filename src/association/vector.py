@@ -1,4 +1,5 @@
 from ingestion.logentry import LogEntry
+from configuration.database_writer import DatabaseWriter
 
 
 class Vector:
@@ -13,6 +14,7 @@ class Vector:
 
     def add_log_entry(self, log_entry: LogEntry):
         self.log_entries.append(log_entry)
+        # TODO Add log entry to database
 
     def get_dict(self):
         return {"name": self.name,

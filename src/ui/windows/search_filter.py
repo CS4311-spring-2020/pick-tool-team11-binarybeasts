@@ -5,6 +5,7 @@ from ui.common import menu_bar
 from configuration.configurations import Configuration
 from threading import Thread
 from ingestion.splunk_interface import SplunkInterface
+from ingestion.logentry import LogEntry
 
 
 class FilterUi(object):
@@ -114,15 +115,17 @@ class FilterUi(object):
         self.vectorSelectCombo.setObjectName("vectorSelectCombo")
         
         self.vectorSelectCombo.addItem("None")
-        self.vectorList = Configuration.get_list_of_vector_dicts(self.configuration)
+        self.vectorList = self.configuration.vectors
         for vector in self.vectorList:
-            self.vectorSelectCombo.addItem(vector["name"])
+            self.vectorSelectCombo.addItem(vector.name)
 
         self.vectorSelectButtonLayout.addWidget(self.vectorSelectCombo)
         self.vectorSelectConfirmButton = QtWidgets.QPushButton(self.vectorViewLayout)
         self.vectorSelectConfirmButton.setCheckable(False)
         self.vectorSelectConfirmButton.setObjectName("vectorSelectConfirmButton")
         self.vectorSelectButtonLayout.addWidget(self.vectorSelectConfirmButton)
+        self.vectorSelectConfirmButton.clicked.connect(lambda: self.insert_log_entry_vector_view(self.vectorSelectCombo.currentText()))
+
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.vectorSelectButtonLayout.addItem(spacerItem)
         self.verticalLayout_4.addLayout(self.vectorSelectButtonLayout)
@@ -166,7 +169,7 @@ class FilterUi(object):
         self.endTimestampLabel.setText(insert("SearchFilterWindow", "End Timestamp"))
         self.applyFilterButton.setText(insert("SearchFilterWindow", "Apply Filter"))
         self.associateButton.setText(insert("SearchFilterWindow", "Associate to Vector"))
-        self.associateButton.clicked.connect(lambda: self.associate(self.filterView, self.vectorView))
+        self.associateButton.clicked.connect(lambda: self.associate(self.filterView, self.vectorView, self.vectorSelectCombo.currentText()))
 
         # Add labels to filter view
         self.filterView.setSortingEnabled(True)
@@ -207,66 +210,8 @@ class FilterUi(object):
         self.vectorView.setSortingEnabled(False)
 
         # Add sample data to vector view
-        # self.vectorView.topLevelItem(0).setText(0, insert("SearchFilterWindow", "0-001"))
-        # self.vectorView.topLevelItem(0).setText(1, insert("SearchFilterWindow", "10/23/2019 15:51"))
-        # self.vectorView.topLevelItem(0).setText(3, insert("SearchFilterWindow", "usr/logs/blue/..."))
-        # self.vectorView.topLevelItem(0).setText(4, insert("SearchFilterWindow", "Blue"))
-        # self.vectorView.topLevelItem(0).setText(5, insert("SearchFilterWindow", "Blue"))
-        # self.vectorView.topLevelItem(0).setText(6, insert("SearchFilterWindow", "/path/observer_notes.osv"))
-        # self.vectorView.topLevelItem(1).setText(0, insert("SearchFilterWindow", "0-002"))
-        # self.vectorView.topLevelItem(1).setText(1, insert("SearchFilterWindow", "10/23/2019 16:00"))
-        # self.vectorView.topLevelItem(1).setText(3, insert("SearchFilterWindow", "usr/logs/red/..."))
-        # self.vectorView.topLevelItem(1).setText(4, insert("SearchFilterWindow", "Red"))
-        # self.vectorView.topLevelItem(1).setText(5, insert("SearchFilterWindow", "Red"))
-        # self.vectorView.topLevelItem(1).setText(6, insert("SearchFilterWindow", "/path/incident/report2.pd"))
-        # self.vectorView.topLevelItem(2).setText(0, insert("SearchFilterWindow", "0-003"))
-        # self.vectorView.topLevelItem(2).setText(1, insert("SearchFilterWindow", "10/23/2019 16:09"))
-        # self.vectorView.topLevelItem(2).setText(3, insert("SearchFilterWindow", "usr/logs/blue/..."))
-        # self.vectorView.topLevelItem(2).setText(4, insert("SearchFilterWindow", "White"))
-        # self.vectorView.topLevelItem(2).setText(5, insert("SearchFilterWindow", "Blue"))
-        # self.vectorView.topLevelItem(2).setText(6, insert("SearchFilterWindow", "/path/incident/report2.pd"))
-        # self.vectorView.topLevelItem(3).setText(0, insert("SearchFilterWindow", "0-004"))
-        # self.vectorView.topLevelItem(3).setText(1, insert("SearchFilterWindow", "10/23/2019 16:18"))
-        # self.vectorView.topLevelItem(3).setText(3, insert("SearchFilterWindow", "usr/logs/red/..."))
-        # self.vectorView.topLevelItem(3).setText(4, insert("SearchFilterWindow", "Red,White"))
-        # self.vectorView.topLevelItem(3).setText(5, insert("SearchFilterWindow", "Red"))
-        # self.vectorView.topLevelItem(3).setText(6, insert("SearchFilterWindow", "/path/observer_notes.osv"))
-        # self.vectorView.topLevelItem(4).setText(0, insert("SearchFilterWindow", "0-005"))
-        # self.vectorView.topLevelItem(4).setText(1, insert("SearchFilterWindow", "10/24/2019 16:27"))
-        # self.vectorView.topLevelItem(4).setText(3, insert("SearchFilterWindow", "usr/logs/red/..."))
-        # self.vectorView.topLevelItem(4).setText(4, insert("SearchFilterWindow", "Blue"))
-        # self.vectorView.topLevelItem(4).setText(5, insert("SearchFilterWindow", "Blue"))
-        # self.vectorView.topLevelItem(4).setText(6, insert("SearchFilterWindow", "/path/incident/report.pd"))
-        # self.vectorView.topLevelItem(5).setText(0, insert("SearchFilterWindow", "0-006"))
-        # self.vectorView.topLevelItem(5).setText(1, insert("SearchFilterWindow", "10/24/2019 16:27"))
-        # self.vectorView.topLevelItem(5).setText(3, insert("SearchFilterWindow", "usr/logs/red/..."))
-        # self.vectorView.topLevelItem(5).setText(4, insert("SearchFilterWindow", "Red"))
-        # self.vectorView.topLevelItem(5).setText(5, insert("SearchFilterWindow", "Blue"))
-        # self.vectorView.topLevelItem(5).setText(6, insert("SearchFilterWindow", "/path/incident/report2.pd"))
-        # self.vectorView.topLevelItem(6).setText(0, insert("SearchFilterWindow", "0-007"))
-        # self.vectorView.topLevelItem(6).setText(1, insert("SearchFilterWindow", "10/24/2019 16:27"))
-        # self.vectorView.topLevelItem(6).setText(3, insert("SearchFilterWindow", "usr/logs/red/..."))
-        # self.vectorView.topLevelItem(6).setText(4, insert("SearchFilterWindow", "White"))
-        # self.vectorView.topLevelItem(6).setText(5, insert("SearchFilterWindow", "Blue"))
-        # self.vectorView.topLevelItem(6).setText(6, insert("SearchFilterWindow", "/path/incident/report.pd"))
-        # self.vectorView.topLevelItem(7).setText(0, insert("SearchFilterWindow", "0-008"))
-        # self.vectorView.topLevelItem(7).setText(1, insert("SearchFilterWindow", "10/24/2019 16:27"))
-        # self.vectorView.topLevelItem(7).setText(3, insert("SearchFilterWindow", "usr/logs/red/..."))
-        # self.vectorView.topLevelItem(7).setText(4, insert("SearchFilterWindow", "Red, White"))
-        # self.vectorView.topLevelItem(7).setText(5, insert("SearchFilterWindow", "Red"))
-        # self.vectorView.topLevelItem(7).setText(6, insert("SearchFilterWindow", "/path/observer_notes.osv"))
-        # self.vectorView.topLevelItem(8).setText(0, insert("SearchFilterWindow", "0-009"))
-        # self.vectorView.topLevelItem(8).setText(1, insert("SearchFilterWindow", "10/24/2019 16:27"))
-        # self.vectorView.topLevelItem(8).setText(3, insert("SearchFilterWindow", "usr/logs/red/..."))
-        # self.vectorView.topLevelItem(8).setText(4, insert("SearchFilterWindow", "Blue"))
-        # self.vectorView.topLevelItem(8).setText(5, insert("SearchFilterWindow", "Blue"))
-        # self.vectorView.topLevelItem(8).setText(6, insert("SearchFilterWindow", "/path/incident/report.pd"))
-        # self.vectorView.topLevelItem(9).setText(0, insert("SearchFilterWindow", "0-0010"))
-        # self.vectorView.topLevelItem(9).setText(1, insert("SearchFilterWindow", "10/24/2019 16:27"))
-        # self.vectorView.topLevelItem(9).setText(3, insert("SearchFilterWindow", "usr/logs/red/..."))
-        # self.vectorView.topLevelItem(9).setText(4, insert("SearchFilterWindow", "White"))
-        # self.vectorView.topLevelItem(9).setText(5, insert("SearchFilterWindow", "Blue"))
-        # self.vectorView.topLevelItem(9).setText(6, insert("SearchFilterWindow", "/path/incident/report2.pd"))
+
+
         self.vectorView.setSortingEnabled(__sortingEnabled)
 
     def get_log_entries_thread(self, configuration):
@@ -290,14 +235,41 @@ class FilterUi(object):
             self.filterView.topLevelItem(i).setText(5, insert("SearchFilterWindow", "-"))
             self.filterView.topLevelItem(i).setText(6, insert("SearchFilterWindow", "-"))
 
-    def insert_log_entry_vector_view(self, vector):
-        # Add spaced for sample data in the vector tree widget
-        for i in range(10):
-            QtWidgets.QTreeWidgetItem(self.vectorView)
+    def insert_log_entry_vector_view(self, vector_name):
+        self.vectorView.clear()
+        selectedVector = None
+        for vector in self.configuration.vectors:
+            if vector.name == vector_name:
+                selectedVector = vector
+        if selectedVector is None:
+            return
+        insert = QtCore.QCoreApplication.translate
 
-    def associate(self, filterView, vectorView):
+        # add actual data
+        for i in range(len(selectedVector.log_entries)):
+            item_to_insert = QtWidgets.QTreeWidgetItem(self.vectorView)
+            item_to_insert.setText(0, insert("SearchFilterWindow", selectedVector.log_entries[i].id))
+            item_to_insert.setText(1, insert("SearchFilterWindow", selectedVector.log_entries[i].time))
+            item_to_insert.setText(2, insert("SearchFilterWindow", selectedVector.log_entries[i].data))
+            item_to_insert.setText(3, insert("SearchFilterWindow", selectedVector.log_entries[i].source_file))
+            item_to_insert.setText(4, insert("SearchFilterWindow", "-"))
+            item_to_insert.setText(5, insert("SearchFilterWindow", "-"))
+            item_to_insert.setText(6, insert("SearchFilterWindow", "-"))
+            self.vectorView.addTopLevelItem(item_to_insert)
+
+    def associate(self, filterView, vectorView, vector_name):
+        selected_vector = None
+        for vector in self.configuration.vectors:
+            if vector.name == vector_name:
+                selected_vector = vector
+        if selected_vector is None:
+            return
         # associate logic
-        selectedItems = filterView.selectionModel().selectedRows
+        selected_items = filterView.selectedItems()
+        for log_entry in selected_items:
+            print("SELECTED ITEM " + log_entry.text(0) + " " + log_entry.text(2) + " " + log_entry.text(1))
+            selected_vector.add_log_entry(LogEntry(log_entry.text(0), log_entry.text(2), log_entry.text(1), "", log_entry.text(3), ""))
+        self.insert_log_entry_vector_view(vector_name)
 
 
 if __name__ == "__main__":

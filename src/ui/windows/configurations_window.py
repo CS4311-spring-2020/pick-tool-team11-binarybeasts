@@ -438,8 +438,8 @@ class ConfigurationsWindow(object):
 
     #clears data from line/text edits after adding to tree widget
     def clearData(self, tree, col1, col2):
-            col1.clear()
-            col2.clear()
+        col1.clear()
+        col2.clear()
 
 
     #remove selected items from tree widget and storage list
