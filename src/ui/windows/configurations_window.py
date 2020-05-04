@@ -441,7 +441,6 @@ class ConfigurationsWindow(object):
         col1.clear()
         col2.clear()
 
-
     #remove selected items from tree widget and storage list
     def removeIconData(self, tree):
         selectedItems = tree.selectedItems()

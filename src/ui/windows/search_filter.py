@@ -209,15 +209,12 @@ class FilterUi(object):
         __sortingEnabled = self.vectorView.isSortingEnabled()
         self.vectorView.setSortingEnabled(False)
 
-        # Add sample data to vector view
-
-
         self.vectorView.setSortingEnabled(__sortingEnabled)
 
     def get_log_entries_thread(self, configuration):
         if configuration.splunk:
-            all_log_entries = configuration.splunk.get_log_entries()
-            self.insert_log_entry_search_data(all_log_entries)
+            self.all_log_entries = configuration.splunk.get_log_entries()
+            self.insert_log_entry_search_data(self.all_log_entries)
 
     def insert_log_entry_search_data(self, log_entries):
         insert = QtCore.QCoreApplication.translate
@@ -270,6 +267,20 @@ class FilterUi(object):
             print("SELECTED ITEM " + log_entry.text(0) + " " + log_entry.text(2) + " " + log_entry.text(1))
             selected_vector.add_log_entry(LogEntry(log_entry.text(0), log_entry.text(2), log_entry.text(1), "", log_entry.text(3), ""))
         self.insert_log_entry_vector_view(vector_name)
+
+    def search_button_clicked(self):
+        # Get all the entered criteria
+        entered_keyword = self.keywordSearchBox.text()
+        creator_white = self.creatorWhiteCheck.isChecked()
+        creator_red = self.creatorRedCheck.isChecked()
+        creator_blue = self.creatorBlueCheck.isChecked()
+        event_red = self.eventTypeRedCheck.isChecked()
+        event_white = self.eventTypeWhiteCheck.isChecked()
+        event_blue = self.eventTypeBlueCheck.isChecked()
+        start_time = self.startTimestampEdit.text()
+        ent_time = self.endTimestampEdit.text()
+
+        # Display filtered log entries
 
 
 if __name__ == "__main__":
