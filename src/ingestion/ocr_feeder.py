@@ -4,9 +4,12 @@
 import pytesseract
 from PIL import Image
 # add path to the tesseract executable
-pytesseract.pytesseract.tesseract_cmd = r'Path to the tesseract executable'
+pytesseract.pytesseract.tesseract_cmd = r'C:\Users\jlluj\AppData\Local\Tesseract-OCR\tesseract.exe'
 
 # add path to the image
-img = Image.open(r'Path to the image')
+img = Image.open(r'C:\Users\jlluj\Documents\PICK\pick-tool-team11-binarybeasts\src\ingestion\testimage.jpg')
 text = pytesseract.image_to_string(img)
 print(text)
+saveFile = open('ingestion\ImageToText.txt', 'w')
+saveFile.write(text)
+saveFile.close()
