@@ -1,5 +1,5 @@
 import sys
-from ui.windows import search_filter, configurations_window, action_report, graph
+from ui.windows import search_filter, configurations_window, action_report, graph_window
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(object):
@@ -85,7 +85,7 @@ class Ui_MainWindow(object):
 # Opens Manage Graph Window
     def manageGraphButtonClicked(self):
         self.graphWindow = QtWidgets.QMainWindow()
-        graph.GraphWindow().setupUi(self.graphWindow)
+        graph_window.GraphWindow().setupUi(self.graphWindow)
         self.graphWindow.show()
 
 # Opens Event Configuration Window

@@ -1,4 +1,4 @@
-from ui.windows import search_filter, configurations_window, action_report, graph
+from ui.windows import search_filter, configurations_window, action_report, graph_window
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 from PyQt5.QtWidgets import QFileDialog, QDialog, QApplication, QWidget, QMainWindow, QVBoxLayout, QHBoxLayout, QFormLayout, QComboBox, QDateTimeEdit, QPushButton, QInputDialog, QLineEdit, QTextEdit, QLabel
@@ -541,32 +541,6 @@ class GraphWindow(object):
         self.tableWidgetNodes.setShowGrid(False)
         self.tableWidgetNodes.setGridStyle(QtCore.Qt.SolidLine)
         self.tableWidgetNodes.setCornerButtonEnabled(False)
-        self.nodes = 1
-        self.node_properties = 9
-        self.tableWidgetNodes.setObjectName("tableWidgetNodes")
-        self.tableWidgetNodes.setColumnCount(self.node_properties)
-        self.tableWidgetNodes.setRowCount(self.nodes)
-        #node table row header
-        #node table row header
-        for property in range(self.node_properties):
-            item = QtWidgets.QTableWidgetItem()
-            self.tableWidgetNodes.setHorizontalHeaderItem(property, item)
-        for node in range(self.nodes):
-            item = QtWidgets.QTableWidgetItem()
-            self.tableWidgetNodes.setVerticalHeaderItem(node, item)
-
-
-        #node table column header
-        for node in range(self.nodes):
-            item = QtWidgets.QTableWidgetItem()
-            self.tableWidgetNodes.setItem(node, 0, item)
-            for property in range(self.node_properties):
-                item = QtWidgets.QTableWidgetItem()
-                item.setFlags(QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
-                item.setCheckState(QtCore.Qt.Checked)
-                self.tableWidgetNodes.setItem(node, property+1, item)
-    
-
         #table properties
         self.tableWidgetNodes.horizontalHeader().setCascadingSectionResizes(False)
         self.tableWidgetNodes.horizontalHeader().setDefaultSectionSize(142)
@@ -687,24 +661,10 @@ class GraphWindow(object):
         self.tableWidgetRelationships.horizontalHeader().setMinimumSectionSize(39)
         self.tableWidgetRelationships.horizontalHeader().setSortIndicatorShown(True)
         self.tableWidgetRelationships.horizontalHeader().setStretchLastSection(True)
-
         self.tableWidgetRelationships.verticalHeader().setVisible(True)
         self.tableWidgetRelationships.verticalHeader().setDefaultSectionSize(30)
         self.tableWidgetRelationships.verticalHeader().setSortIndicatorShown(False)
         self.verticalLayout.addWidget(self.tableWidgetRelationships)
-
-        #self.pushButtonDeleteRelationship = QtWidgets.QPushButton(self.subwindow_Relationship)
-        #sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        #sizePolicy.setHorizontalStretch(0)
-        #sizePolicy.setVerticalStretch(0)
-        #sizePolicy.setHeightForWidth(self.pushButtonDeleteRelationship.sizePolicy().hasHeightForWidth())
-
-        #delete relationship button
-        #self.pushButtonDeleteRelationship.setSizePolicy(sizePolicy)
-        #self.pushButtonDeleteRelationship.setObjectName("pushButtonDeleteRelationship")
-        #self.verticalLayout.addWidget(self.pushButtonDeleteRelationship)
-
-        
         self.mdiArea.addSubWindow(self.subwindow_Relationship)
         self.mdiArea.addSubWindow(self.subwindow_Table)
         self.gridLayout.addWidget(self.mdiArea, 1, 0, 1, 1)
@@ -815,35 +775,8 @@ class GraphWindow(object):
         
         self.actionTabular_View.setText(insert("graphWindow", "Tabular View"))
         self.subwindow_Table.setWindowTitle(insert("graphWindow", "Tabular View"))
-
-        #table headers
-        self.tableWidgetNodes.setSortingEnabled(True)
-        item = self.tableWidgetNodes.verticalHeaderItem(0)
-        item.setText(insert("graphWindow", "Property Visibility"))
-        item = self.tableWidgetNodes.horizontalHeaderItem(0)
-        item.setText(insert("graphWindow", "Node Visibility"))
-        item = self.tableWidgetNodes.horizontalHeaderItem(1)
-        item.setText(insert("graphWindow", "Node Id"))
-        item = self.tableWidgetNodes.horizontalHeaderItem(2)
-        item.setText(insert("graphWindow", "Node Name"))
-        item = self.tableWidgetNodes.horizontalHeaderItem(3)
-        item.setText(insert("graphWindow", "Node Timestamp"))
-        item = self.tableWidgetNodes.horizontalHeaderItem(4)
-        item.setText(insert("graphWindow", "Node Description"))
-        item = self.tableWidgetNodes.horizontalHeaderItem(5)
-        item.setText(insert("graphWindow", "Log Entry Reference"))
-        item = self.tableWidgetNodes.horizontalHeaderItem(6)
-        item.setText(insert("graphWindow", "Log Creator"))
-        item = self.tableWidgetNodes.horizontalHeaderItem(7)
-        item.setText(insert("graphWindow", "Icon Type"))
-        item = self.tableWidgetNodes.horizontalHeaderItem(8)
-        item.setText(insert("graphWindow", "Source"))
         __sortingEnabled = self.tableWidgetNodes.isSortingEnabled()
         self.tableWidgetNodes.setSortingEnabled(False)
-
-        #items in table
-        
-        
         self.tableWidgetNodes.setSortingEnabled(__sortingEnabled)
         self.subwindow_Graph.setWindowTitle(insert("graphWindow", "Graphical View"))
 
@@ -957,8 +890,98 @@ class GraphWindow(object):
         for vector in self.vectorList:
             if (vector["name"] == self.comboBoxVector.currentText()):
                 self.lineEditVectorDesc.setText(vector["description"])
+                self.table_items(self.tableWidgetNodes, self.comboBoxVector.currentText())
 
+    def insert_log_entry_table_view(self, vector_name):
+        self.tableWidgetNodes.clearContents()
+        selectedVector = None
+        for vector in self.configuration.vectors:
+            if vector.name == vector_name:
+                selectedVector = vector
+        if selectedVector is None:
+            return
 
+        self.nodes = len(selectedVector.log_entries) + 1
+        self.node_properties = 9
+        self.tableWidgetNodes.setObjectName("tableWidgetNodes")
+        self.tableWidgetNodes.setColumnCount(self.node_properties)
+        self.tableWidgetNodes.setRowCount(self.nodes)
+
+        # creates node table row header
+        for node in range(self.nodes):
+            item = QtWidgets.QTableWidgetItem()
+            self.tableWidgetNodes.setVerticalHeaderItem(node, item)
+
+        # creates node table column header
+        for property in range(self.node_properties):
+            item = QtWidgets.QTableWidgetItem()
+            self.tableWidgetNodes.setHorizontalHeaderItem(property, item)
+
+        # creates the first column in the first row without a check box (0,0)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidgetNodes.setItem(0, 0, item)
+
+        # creates the rest of the columns in the first row with checkboxes (0,1) to (0,n)
+        for property in range(8):
+            item = QtWidgets.QTableWidgetItem()
+            item.setFlags(QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+            item.setCheckState(QtCore.Qt.Checked)
+            self.tableWidgetNodes.setItem(0, property + 1, item)
+
+        # # creates the rest of the table starting at (1,0)
+        for node in range(self.nodes):
+            # creates the checkbox for every row in the first column
+            item = QtWidgets.QTableWidgetItem()
+            item.setFlags(QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+            item.setCheckState(QtCore.Qt.Checked)
+            self.tableWidgetNodes.setItem(node + 1, 0, item)
+            for property in range(8):
+                item = QtWidgets.QTableWidgetItem()
+                self.tableWidgetNodes.setItem(node + 1, property + 1, item)
+
+        # add actual data
+        for i in range(len(selectedVector.log_entries)):
+            # self.tableWidgetNodes.insertRow(i+1)
+            item = QtWidgets.QTableWidgetItem()
+            item.setText(selectedVector.log_entries[i].time)
+            self.tableWidgetNodes.setItem(i + 1, 3, item)
+            item = QtWidgets.QTableWidgetItem()
+            item.setText(selectedVector.log_entries[i].data)
+            self.tableWidgetNodes.setItem(i + 1, 4, item)
+            item = QtWidgets.QTableWidgetItem()
+            item.setText(selectedVector.log_entries[i].source_file)
+            self.tableWidgetNodes.setItem(i + 1, 5, item)
+
+        insert = QtCore.QCoreApplication.translate
+        item = self.tableWidgetNodes.verticalHeaderItem(0)
+        item.setText(insert("graphWindow", "Property Visibility"))
+        item = self.tableWidgetNodes.horizontalHeaderItem(0)
+        item.setText(insert("graphWindow", "Node Visibility"))
+        item = self.tableWidgetNodes.horizontalHeaderItem(1)
+        item.setText(insert("graphWindow", "Node Id"))
+        item = self.tableWidgetNodes.horizontalHeaderItem(2)
+        item.setText(insert("graphWindow", "Node Name"))
+        item = self.tableWidgetNodes.horizontalHeaderItem(3)
+        item.setText(insert("graphWindow", "Node Timestamp"))
+        item = self.tableWidgetNodes.horizontalHeaderItem(4)
+        item.setText(insert("graphWindow", "Node Description"))
+        item = self.tableWidgetNodes.horizontalHeaderItem(5)
+        item.setText(insert("graphWindow", "Log Entry Reference"))
+        item = self.tableWidgetNodes.horizontalHeaderItem(6)
+        item.setText(insert("graphWindow", "Log Creator"))
+        item = self.tableWidgetNodes.horizontalHeaderItem(7)
+        item.setText(insert("graphWindow", "Icon Type"))
+        item = self.tableWidgetNodes.horizontalHeaderItem(8)
+        item.setText(insert("graphWindow", "Source"))
+
+    def table_items(self, tableWidgetNodes, vector_name):
+        selected_vector = None
+        for vector in self.configuration.vectors:
+            if vector.name == vector_name:
+                selected_vector = vector
+        if selected_vector is None:
+            return
+        self.insert_log_entry_table_view(vector_name)
 
 if __name__ == "__main__":
     import sys
