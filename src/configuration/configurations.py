@@ -1,5 +1,5 @@
 import os
-from association.vector import Vector
+from configuration.vector import Vector
 from configuration.icon import Icon
 from ingestion.splunk_interface import SplunkInterface
 from threading import Thread
