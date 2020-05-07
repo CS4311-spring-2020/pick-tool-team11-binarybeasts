@@ -50,7 +50,7 @@ class Ui_MainWindow(object):
         # Manage Graph Button
         self.gridLayout_3.addWidget(self.app_name, 0, 0, 1, 1)
         self.manageGraphButton = QtWidgets.QPushButton(self.centralwidget)
-        self.manageGraphButton.clicked.connect(self.get_graphWindow)
+        self.manageGraphButton.clicked.connect(self.open_graphWindow)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHeightForWidth(self.manageGraphButton.sizePolicy().hasHeightForWidth())
         self.manageGraphButton.setSizePolicy(sizePolicy)
@@ -58,17 +58,17 @@ class Ui_MainWindow(object):
         # Search/Filter Button
         self.gridLayout_3.addWidget(self.manageGraphButton, 4, 0, 1, 1)
         self.searchFilterButton = QtWidgets.QPushButton(self.centralwidget)
-        self.searchFilterButton.clicked.connect(self.get_SearchFilterWindow)
+        self.searchFilterButton.clicked.connect(self.open_SearchFilterWindow)
 
         # Enforcement Action Report Button
         self.gridLayout_3.addWidget(self.searchFilterButton, 3, 0, 1, 1)
         self.actionReportButton = QtWidgets.QPushButton(self.centralwidget)
-        self.actionReportButton.clicked.connect(self.get_EAR)
+        self.actionReportButton.clicked.connect(self.open_EAR)
 
         # Event Configuration Button
         self.gridLayout_3.addWidget(self.actionReportButton, 2, 0, 1, 1)
         self.eventConfigButton = QtWidgets.QPushButton(self.centralwidget)
-        self.eventConfigButton.clicked.connect(self.get_configurationsWindow)
+        self.eventConfigButton.clicked.connect(self.open_configurationsWindow)
         self.gridLayout_3.addWidget(self.eventConfigButton, 1, 0, 1, 1)
         self.gridLayout_5.addLayout(self.gridLayout_3, 0, 2, 4, 1)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -77,25 +77,25 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
 # Opens Search/Filter Window
-    def get_SearchFilterWindow(self):
+    def open_SearchFilterWindow(self):
         self.filterWindow = QtWidgets.QMainWindow()
         search_filter.FilterUi().setupUi(self.filterWindow)
         self.filterWindow.show()
 
 # Opens Manage Graph Window
-    def get_graphWindow(self):
+    def open_graphWindow(self):
         self.graphWindow = QtWidgets.QMainWindow()
         graph_window.GraphWindow().setupUi(self.graphWindow)
         self.graphWindow.show()
 
 # Opens Event Configuration Window
-    def get_configurationsWindow(self):
+    def open_configurationsWindow(self):
         self.eventConfigWindow = QtWidgets.QMainWindow()
         configurations_window.ConfigurationsWindow().generateUi(self.eventConfigWindow)
         self.eventConfigWindow.show()
 
 # Opens Enforcement Action Report Window
-    def get_EAR(self):
+    def open_EAR(self):
         self.actionReportWindow = QtWidgets.QMainWindow()
         action_report.ActionReportWindow().generateUi(self.actionReportWindow)
         self.actionReportWindow.show()
