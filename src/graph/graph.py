@@ -20,7 +20,7 @@ class Graph:
         self.nodes.append(node)
 
     # Add the given connector to this graph
-    def add_connector(self, relationship):
+    def add_relationship(self, relationship):
         self.relationships.append(relationship)
 
     # Remove the node with the given node_id

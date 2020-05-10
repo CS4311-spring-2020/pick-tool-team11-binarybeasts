@@ -8,7 +8,7 @@ from ingestion.splunk_interface import SplunkInterface
 from ingestion.logentry import LogEntry
 
 
-class FilterUi(object):
+class Search_Filter_Window(object):
 
     def setupUi(self, SearchFilterWindow):
         SearchFilterWindow.setObjectName("SearchFilterWindow")
@@ -169,7 +169,7 @@ class FilterUi(object):
         self.endTimestampLabel.setText(insert("SearchFilterWindow", "End Timestamp"))
         self.applyFilterButton.setText(insert("SearchFilterWindow", "Apply Filter"))
         self.associateButton.setText(insert("SearchFilterWindow", "Associate to Vector"))
-        self.associateButton.clicked.connect(lambda: self.associate(self.filterView, self.vectorView, self.vectorSelectCombo.currentText()))
+        self.associateButton.clicked.connect(lambda: self.associate(self.vectorSelectCombo.currentText()))
 
         # Add labels to filter view
         self.filterView.setSortingEnabled(True)
@@ -211,11 +211,13 @@ class FilterUi(object):
 
         self.vectorView.setSortingEnabled(__sortingEnabled)
 
+    # Get log entries from splunk. Use a thread because this can take a while.
     def get_log_entries_thread(self, configuration):
         if configuration.splunk:
             self.all_log_entries = configuration.splunk.get_log_entries()
             self.insert_log_entry_search_data(self.all_log_entries)
 
+    # Insert the list of log entries to the search results
     def insert_log_entry_search_data(self, log_entries):
         insert = QtCore.QCoreApplication.translate
         # Add empty spaces to Search Results view to enter sample data
@@ -232,6 +234,7 @@ class FilterUi(object):
             self.filterView.topLevelItem(i).setText(5, insert("SearchFilterWindow", "-"))
             self.filterView.topLevelItem(i).setText(6, insert("SearchFilterWindow", "-"))
 
+    # Insert associated log entries from a vector
     def insert_log_entry_vector_view(self, vector_name):
         self.vectorView.clear()
         selectedVector = None
@@ -254,7 +257,8 @@ class FilterUi(object):
             item_to_insert.setText(6, insert("SearchFilterWindow", "-"))
             self.vectorView.addTopLevelItem(item_to_insert)
 
-    def associate(self, filterView, vectorView, vector_name):
+    # Associate the selected log entry to the vector with the given name.
+    def associate(self, vector_name):
         selected_vector = None
         for vector in self.configuration.vectors:
             if vector.name == vector_name:
@@ -262,13 +266,14 @@ class FilterUi(object):
         if selected_vector is None:
             return
         # associate logic
-        selected_items = filterView.selectedItems()
+        selected_items = self.filterView.selectedItems()
         for log_entry in selected_items:
             print("SELECTED ITEM " + log_entry.text(0) + " " + log_entry.text(2) + " " + log_entry.text(1))
             selected_vector.add_log_entry(LogEntry(log_entry.text(0), log_entry.text(2), log_entry.text(1), "", log_entry.text(3), ""))
         self.insert_log_entry_vector_view(vector_name)
 
-    def search_button_clicked(self):
+    # Replace displayed log search results with filtered results
+    def filter(self):
         # Get all the entered criteria
         entered_keyword = self.keywordSearchBox.text()
         creator_white = self.creatorWhiteCheck.isChecked()
@@ -286,7 +291,7 @@ class FilterUi(object):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     SearchFilterWindow = QtWidgets.QMainWindow()
-    ui = FilterUi()
+    ui = Search_Filter_Window()
     ui.setupUi(SearchFilterWindow)
     SearchFilterWindow.show()
     sys.exit(app.exec_())

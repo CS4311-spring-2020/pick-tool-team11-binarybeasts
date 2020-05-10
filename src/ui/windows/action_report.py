@@ -7,7 +7,7 @@ from threading import Thread
 from ingestion.splunk_interface import SplunkInterface
 
 
-class ActionReportWindow(object):
+class EARWindow(object):
     app = QtWidgets.QApplication([])
     app.setStyle('Fusion')
 
@@ -210,7 +210,7 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     actionReportWindow = QtWidgets.QMainWindow()
-    ui = ActionReportWindow()
+    ui = EARWindow()
     ui.generateUi(actionReportWindow)
     actionReportWindow.show()
     sys.exit(app.exec_())

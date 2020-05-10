@@ -2,7 +2,7 @@ import sys
 from ui.windows import search_filter, configurations_window, action_report, graph_window
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-class Ui_MainWindow(object):
+class Main_Window(object):
     def setupUi(self, MainWindow):
         MainWindow.resize(400, 340)
         MainWindow.setAutoFillBackground(True)
@@ -79,7 +79,7 @@ class Ui_MainWindow(object):
 # Opens Search/Filter Window
     def open_SearchFilterWindow(self):
         self.filterWindow = QtWidgets.QMainWindow()
-        search_filter.FilterUi().setupUi(self.filterWindow)
+        search_filter.Search_Filter_Window().setupUi(self.filterWindow)
         self.filterWindow.show()
 
 # Opens Manage Graph Window
@@ -97,7 +97,7 @@ class Ui_MainWindow(object):
 # Opens Enforcement Action Report Window
     def open_EAR(self):
         self.actionReportWindow = QtWidgets.QMainWindow()
-        action_report.ActionReportWindow().generateUi(self.actionReportWindow)
+        action_report.EARWindow().generateUi(self.actionReportWindow)
         self.actionReportWindow.show()
 
     def retranslateUi(self, MainWindow):
@@ -113,7 +113,7 @@ class Ui_MainWindow(object):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
+    ui = Main_Window()
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())

@@ -39,6 +39,7 @@ class Configuration:
 
         Configuration.__instance = self
 
+    # look at database to see if there is information stored
     def check_database(self):
         lead_info = DatabaseWriter.get_all_documents_in_collection(DatabaseWriter.COLLECTION_TEAM)
         if len(lead_info) != 0:
@@ -83,6 +84,7 @@ class Configuration:
         if len(icon_info) != 0:
             self.icons = [Icon(icon_doc["name"], icon_doc["source"]) for icon_doc in icon_info]
 
+    # Set the team information
     def set_team(self, is_Lead, lead_IP, established_connections):
         self.is_lead = is_Lead
         self.lead_IP = lead_IP
@@ -90,6 +92,7 @@ class Configuration:
         DatabaseWriter.write_dict_to_collection(self.get_team_dict(), DatabaseWriter.COLLECTION_TEAM)
         DatabaseWriter.print_collection(DatabaseWriter.COLLECTION_TEAM)
 
+    # Set the event information
     def set_event(self, name, description, start_time, end_time):
         self.event_name = name
         self.event_description = description
@@ -98,6 +101,7 @@ class Configuration:
         DatabaseWriter.write_dict_to_collection(self.get_event_dict(), DatabaseWriter.COLLECTION_EVENT)
         DatabaseWriter.print_collection(DatabaseWriter.COLLECTION_EVENT)
 
+    # Set the directory info
     def set_directories(self, root_dir, red_dir, blue_dir, white_dir):
         self.root_directory = root_dir
         self.red_directory = red_dir
@@ -127,6 +131,7 @@ class Configuration:
         self.splunk.connect()
         Thread(target=self.splunk.start_ingestion).start()
 
+    # Given a directory, get a list of files in the directory as file paths
     def get_filepaths_from_directory(self, dir):
         file_paths = []
         if len(dir) == 0:
@@ -137,11 +142,13 @@ class Configuration:
                 file_paths.append(full_path)
         return file_paths
 
+    # Add a vector to configuration. Store in database.
     def add_vector(self, name, description):
         new_vector = Vector(name, description)
         self.vectors.append(new_vector)
         DatabaseWriter.write_dict_to_collection(new_vector.get_dict(), DatabaseWriter.COLLECTION_VECTOR)
 
+    # Delete vector from configuration. Remove from database.
     def delete_vector(self, vectorName):
         for i in range(len(self.vectors)):
             if self.vectors[i].name == vectorName:
@@ -149,11 +156,13 @@ class Configuration:
                 DatabaseWriter.delete_one_from_collection({"name": vectorName}, DatabaseWriter.COLLECTION_VECTOR)
                 break
 
+    # Add icon to configuration. Add to database.
     def add_icon(self, name, source):
         new_icon = Icon(name, source)
         self.icons.append(new_icon)
         DatabaseWriter.write_dict_to_collection(new_icon.get_dict(), DatabaseWriter.COLLECTION_ICON)
 
+    # Delete Icon from configuration. Delete from Database.
     def delete_icon(self, iconName):
         for i in range(len(self.icons)):
             if self.icons[i].name == iconName:
@@ -161,25 +170,30 @@ class Configuration:
                 DatabaseWriter.delete_one_from_collection({"name": iconName}, DatabaseWriter.COLLECTION_ICON)
                 break
 
+    # Get dictionary representation of team
     def get_team_dict(self):
         return {"is_Lead": self.is_lead,
                 "lead_IP": self.lead_IP,
                 "established_connections": self.established_connections}
 
+    # Get dictionary representation of event
     def get_event_dict(self):
         return {"event_name": self.event_name,
                 "event_description": self.event_description,
                 "event_start": self.event_start,
                 "event_end": self.event_end}
 
+    # Get dictionary representation of directories
     def get_directories_dict(self):
         return {"root_directory": self.root_directory,
                 "red_directory": self.red_directory,
                 "blue_directory": self.blue_directory,
                 "white_directory": self.white_directory}
 
+    # Get dictionary representation of vectors
     def get_list_of_vector_dicts(self):
         return [vector.get_dict() for vector in self.vectors]
 
+    # Get dictionary representation of icons
     def get_list_of_icon_dicts(self):
         return [icon.get_dict() for icon in self.icons]

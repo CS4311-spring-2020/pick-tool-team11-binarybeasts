@@ -25,3 +25,12 @@ if __name__== "__main__":
     # Give the location you would like to have the file saved.
     data.to_csv(r'C:\locationPath\Cleansed.csv',index=False)
 
+
+class Cleansing:
+
+    def __init__(self):
+        pass
+
+    # Given a filepath, cleanse the file
+    def cleanse(self, source):
+        pass

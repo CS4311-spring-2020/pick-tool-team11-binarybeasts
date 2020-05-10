@@ -12,10 +12,12 @@ class Vector:
         self.name = name
         self.description = description
 
+    # Add a log entry to this vector. Add to this vector's document in the database.
     def add_log_entry(self, log_entry: LogEntry):
         self.log_entries.append(log_entry)
-        # TODO Add log entry to database
+        # Add log entry to database
 
+    # Return a dictionary representation of this Vector.
     def get_dict(self):
         return {"name": self.name,
                 "description": self.description,

@@ -11,6 +11,7 @@ class SplunkInterface:
         self.blue_files = blue_files
         self.white_files = white_files
 
+    # Get the splunk connection
     def connect(self):
         HOST = "localhost"
         PORT = 8089
@@ -31,6 +32,7 @@ class SplunkInterface:
         self.index = self.service.indexes["test_splunk"]
         return self
 
+    # Send files to splunk
     def start_ingestion(self):
         # trying to automatically ingest this
         # ingest = self.rootDirectory.text()
@@ -53,6 +55,7 @@ class SplunkInterface:
             for filepath in directory_files:
                 self.index.upload(filepath)
 
+    # Get a list of log entries from splunk
     def get_log_entries(self):
         # Run an export search and display the results using the results reader.
 
